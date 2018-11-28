@@ -2,7 +2,13 @@
 
 #### 项目介绍
 灵盾网络空间安全竞赛答题平台 - 使用ThinkPHP5.0+Bootstrap3编写,此平台用于模拟网络空间安全赛项的第一阶段。
+#### 项目截图
+前端界面
+![输入图片说明](https://images.gitee.com/uploads/images/2018/1128/213216_1d8cf9ae_1270405.png "屏幕截图.png")
 
+后端界面
+![输入图片说明](https://images.gitee.com/uploads/images/2018/1128/213310_3488efbf_1270405.png "屏幕截图.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2018/1128/213326_c470b257_1270405.png "屏幕截图.png")
 #### 安装教程
 1.环境要求:PHP5.5+
           mysql5.5+
@@ -23,6 +29,7 @@
 3.将网站的运行目录指定到 “public” 注意目录防跨哦！！
 
 4.配置重写规则 （列举Nginx重写方式）
+
     在nginx配置文件的  location / {下添加以下内容
             if (!-e $request_filename) {
                 rewrite  ^(.*)$  /index.php?s=/$1  last;
