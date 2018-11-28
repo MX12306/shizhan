@@ -203,7 +203,9 @@ class Api extends \think\Controller{
         }
         $id = Request::instance()->get('id');
         $logMod = new model\log();
+        $scoreMod = new model\score();
         $logMod->where('cid', $id)->delete();
+        $scoreMod->where('cid', $id)->delete();
         $this->success("题目答题记录已删除", '/admin.php/addclass');
     }
 
