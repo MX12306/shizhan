@@ -1,0 +1,31 @@
+{include file="index:top"}
+{include file="index:nav"}
+<div class="container">
+    <p class="text-right text-danger">用户:{$Think.session.user}，当前排名:{$rownum|default="信息错误"}，当前得分:{$score|default="信息错误"}</p>
+    <table class="table table-bordered table-hover">
+        <caption><h1>提交记录</h1></caption>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>题目</th>
+                <th>提交答案</th>
+                <th>提交时间</th>
+                <th>得分</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="logList" id="vo"}
+            <tr>
+                <th>{$vo.id}</th>
+                <td>{$vo.name}</td>
+                <td>{:htmlentities($vo.answer)}</td>
+                <td>{$vo.an_time}</td>
+                <td>{if condition="$vo.yn == 1"}{$vo.score}
+                    {else /}0
+                    {/if}</td>
+            </tr>
+            {/volist}
+            </tbody>
+    </table>
+</div>
+{include file="index:bottom"}

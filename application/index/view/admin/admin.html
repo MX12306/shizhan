@@ -1,0 +1,53 @@
+{include file="admin:top"}
+<div class="container">
+    <caption><h1>平台配置</h1></caption>
+    <form method="post" action="/admin.php/save">
+        <div class="form-group">
+            <label for="name">平台标题</label>
+            <input type="text" class="form-control" id="name" name="title" value="{:config('title')}">
+        </div>
+
+        <div class="form-group">
+            <label for="announcement">平台公告</label>
+            <textarea class="form-control" id="announcement" name="announcement" rows="6">{:config('announcement')}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="tips">前台提示</label>
+            <textarea class="form-control" id="tips" name="tips" rows="6">{:config('tips')}</textarea>
+        </div>
+
+        <div class="checkbox">
+            <label>
+                {if condition="config('open_time') == 0"}
+                <input name="open_time" type="checkbox"> 计时开关
+                {else /}
+                <input name="open_time" type="checkbox" checked="checked"> 计时开关
+                {/if}
+
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label for="start_time">开始时间(默认时间设置为提前5分钟)</label>
+            <p>当前设置的时间为 {:date('Y-m-d H:i:s', config('start_time'))}</p>
+            <input type="datetime" class="form-control" id="start_time" name="start_time" value="{:showTime()['start']}">
+        </div>
+
+        <div class="form-group">
+            <label for="stop_time">结束时间(默认比赛时间为100分钟)</label>
+            <p>当前设置的时间为 {:date('Y-m-d H:i:s', config('stop_time'))}</p>
+            <input type="datetime" class="form-control" id="stop_time" name="stop_time" value="{:showTime()['end']}">
+        </div>
+        <button type="submit" class="btn btn-default">更新配置</button>
+    </form>
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>
+

@@ -1,0 +1,77 @@
+body{
+
+}
+/*头部样式*/
+.top_logo{
+    width: 100%;
+    height: 60px;
+    color: #F5F5F5;
+    font-size: 30px;
+    background-color: #1b315e;
+    overflow:hidden;
+}
+.top_logo p{
+    white-space:nowrap;
+    margin-top: 10px;
+}
+.navbar-inverse {
+    background-color: #222;
+    border-color: transparent;
+}
+.navbar{
+    border-radius: inherit;
+}
+
+/*导航条样式*/
+.top_nav {
+    background: #1a2940;
+    position: relative;
+    list-style: none;
+}
+
+.top_nav ul {
+    list-style: none;
+    white-space: nowrap;
+    margin: 0;
+    padding: 0
+}
+
+.top_nav li {
+    float: left
+}
+
+.top_nav a {
+    display: block;
+    color: #fff;
+    line-height: 40px;
+    padding: 0 30px;
+    text-decoration: none
+}
+
+.top_nav a.selected {
+    background: #e5601d
+}
+
+.top_nav li a:hover {
+    background: #e86f2e;
+    text-decoration: none
+}
+
+.top_nav .son li {
+    float: none;
+}
+
+.list {
+    display: inline-block;
+}
+
+.list-content {
+    min-width: 116px;
+    background-color: #000;
+    position: absolute;
+    display: none;
+}
+
+.list:hover .list-content {
+    display: block;
+}

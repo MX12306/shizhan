@@ -1,0 +1,86 @@
+{include file="admin:top"}
+<div class="container">
+    <div class="panel panel-default">
+        <form name="login" action="/api/add_answer" method="post" onsubmit="return tijiao()">
+            <div class="panel-heading">
+                <h3 class="panel-title">为分类为:{$name['name']|default="题目编辑状态 不想显示"}</h3>
+            </div>
+            <div class="panel-body">
+                <input type="hidden" name="cid" value="{$Think.get.cid}">
+                <input type="hidden" name="edit" value="{$edit}">
+                <input type="hidden" name="id" value="{$Think.get.id}">
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-name">题目名称</span>
+                    <input type="text" name="name" class="form-control" placeholder="题目名称" value="{$data.name|default=''}" aria-describedby="basic-name">
+                </div>
+                <br>
+                <div>
+
+                    <p>题目内容 支持html</p>
+                    <textarea style="height: 100%" rows="10" name="content" class="form-control" placeholder="题目内容">{$data.content|default=''}</textarea>
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-flag">答案</span>
+                    <input type="text" name="flag" class="form-control" placeholder="题目答案"  value="{$data.flag|default=''}" aria-describedby="basic-flag">
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-score">分数</span>
+                    <input type="text" name="score" class="form-control" placeholder="题目分数" value="{$data.score|default=''}" aria-describedby="basic-score">
+                </div>
+                <br>
+            </div>
+            <div class="panel-footer">
+                <p class="text-center">
+                    <button type="submit" class="btn btn-success">添加题目到数据库</button>
+                </p>
+            </div>
+        </form>
+    </div>
+    {if condition="$edit == false"}
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>题目名称</th>
+            <th>内容</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {volist name="t_list" id="vo"}
+        <tr>
+            <th>{$vo.name}</th>
+            <td>{$vo.content}</td>
+            <td>
+                <a href="/admin.php/add?edit=1&id={$vo.id}&cid={$Think.get.cid}"><button type="button" class="btn btn-primary">编辑</button></a>
+                <a href="/api/del_tanswer?id={$vo.id}&cid={$Think.get.cid}"><button type="button" class="btn btn-danger">删除</button></a>
+            </td>
+        </tr>
+        {/volist}
+
+        </tbody>
+    </table>
+    {/if}
+</div>
+<script>
+    function tijiao() {
+        var name = $("input[name='name']").val();
+        var content = $("input[name='content']").val();
+        var score = $("input[name='score']").val();
+        if(name.length == 0){
+            alert('请输入题目名称');
+            return false
+        }
+        if(content.length == 0){
+            alert('请输入题目内容');
+            return false
+        }
+        if(score.length == 0){
+            alert('请输入题目分值');
+            return false
+        }
+        return true;
+    }
+</script>

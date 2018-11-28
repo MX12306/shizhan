@@ -1,0 +1,29 @@
+{include file="index:top"}
+{include file="index:nav"}
+<div class="container">
+    <div class="container">
+        <table class="table table-bordered table-hover">
+            <caption><h1>赛场排名</h1></caption>
+            <thead>
+            <tr>
+                <th>排名</th>
+                <th>用户名</th>
+                <th>解题数</th>
+                <th>当前分数</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="rankingLog" id="vo"}
+
+            <tr{if condition="$vo.uid == $Think.session.userID"} class="success"{/if}>
+                <th>{$vo.rownum}</th>
+                <td>{:IdGetName($vo.uid)}</td>
+                <td>{:countScore($vo.uid)}</td>
+                <td>{$vo.score}</td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+</div>
+{include file="index:bottom"}

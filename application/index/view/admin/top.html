@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>小别致长得真东西！！！</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/admin/admin.css">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="__PUBLIC__/js/html5shiv.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/js/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="__PUBLIC__/js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="top_logo">
+    <div class="container"><p>小别致长得真东西！！！</p></div>
+</div>
+<ul class="top_nav">
+    <div class="list son">
+        <li><a class="{$selected|default=""}" href="/admin.php">平台配置</a></li>
+    </div>
+
+    <div class="list son">
+        <li><a class="{$selected1|default=""} href="javascript:void(0)">添加题目</a></li>
+        <div class="list-content">
+            <li><a href="/admin.php/addclass">创建题目分类</a></li>
+            <li><a href="/admin.php/add">添加题目</a></li>
+        </div>
+    </div>
+
+    <div class="list son">
+        <li><a class="{$selected2|default=""} href="javascript:void(0)">用户管理</a></li>
+        <div class="list-content">
+            <li><a href="#">创建用户</a></li>
+            <li><a href="#">用户列表</a></li>
+        </div>
+    </div>
+</ul>

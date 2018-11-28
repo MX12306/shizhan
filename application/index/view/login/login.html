@@ -1,0 +1,43 @@
+{include file="index:top"}
+<div class="container">
+    <div class="row" style="margin-top:30px;">
+        <div class="col-md-6" style="border-right:1px solid #ddd;">
+            <div class="well col-md-10">
+                <h3>登录入口</h3>
+                <form name="login" action="/api/login" method="post" onsubmit="return verification();">
+                <div class="input-group input-group-md">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user" aria-hidden="true"></i></span>
+                    <input id="user" name="user" type="text" class="form-control" placeholder="Username" aria-describedby="sizing-addon1">
+                </div>
+                <br />
+                <div class="input-group input-group-md">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    <input id="password" name="password" type="password" class="form-control" placeholder="Password" aria-describedby="sizing-addon1">
+                </div>
+                <br />
+                <button type="submit" class="btn btn-success btn-block">登录</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h3>欢迎来到{$title}</h3>
+            <ul>
+                {$tips|default=""}
+                <br />
+                <li style="color: #ff0000;"><a href="/register">没有账号?点我注册</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    function verification(){
+        var user = $("#user").val();
+        var pass = $("#password").val();
+        if(user.length==0 || pass.length==0){
+            alert('用户/密码不能为空');
+            return false;
+        }
+        return true;
+    }
+</script>
+{include file="index:bottom"}

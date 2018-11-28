@@ -1,0 +1,231 @@
+{include file="index:top"}
+{include file="index:nav"}
+<style>
+    .topic{
+        overflow-x:hidden;
+        overflow-y:scroll;
+        height: 500px;
+        width:100%
+    }
+    .notice {
+        overflow:hidden;
+        height: 500px;
+        width: 100%;
+        color: #49afcd;
+        border-style: dotted;
+        margin-top: 10px;
+        padding-left: 5px;
+        padding-right: 5px;
+
+    }
+    .content{
+        width: 100%;
+    {if condition="$display == 1"}
+    height: 80%;/*90为显示公告*/
+    {else /}
+    height: 90%;
+    {/if}
+    }
+    .content p{
+        width:100%;
+        display: inline;
+    }
+    .content pre{
+        width: 100%;
+        height: 100%;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+    .answer_area{
+        width: 100%;
+
+        margin-top: 1px;
+    }
+    .answer_area button{
+        width: 90px;
+        height: 50px;
+    }
+    .answer_area #submit{
+        width: 100%;
+        height: 50px;
+        font-size: 30px;
+        color: #FF0000;
+    }
+    .answer_area p{
+        float: right;
+    }
+    .col-xs-8{
+        float:left;
+    }
+</style>
+<h3 class="text-center">{$term_name|default="null"}</h3>
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-xs-4">
+            <p>题目</p>
+            <div class="topic">
+                <table class="table table-hover">
+                    <tbody>
+                    {volist name="list" id="vo"}
+                    <tr><td><h4><a href="/?id={$vo.id}">{$vo.name}</a></h4></td></tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-8">
+            <p style="display: inline">题目内容</p>
+            <p id="time" class="text-danger" style="display: inline;float: right;">距离结束还有:00:00:00</p>
+            <div class="notice">
+                <h4 class="text-center">{$_title}</h4>
+                <div class="content">
+<pre>
+{$content}
+</pre>
+                </div>
+                {if condition="$display == 1"}<div id="answer_area" class="answer_area input-group">
+                    {if condition="$yn == 1"}
+                    <input id="aid" type="hidden" value="{$id}">
+                    <input id="submit" class="form-control" type="text" placeholder="输入Flag值">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-success btn-block" onclick="submit()">提交答案</button>
+                    </div>
+                    {else /}
+                    <p class="text-right">你已经答对过此题</p>
+                    {/if}
+                </div>
+                {/if}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">靶机信息</h3>
+        </div>
+        <div class="panel-body">
+            {$info|default="暂时未提供任何有关信息"}
+        </div>
+    </div>
+
+</div>
+<br >
+<br >
+<script>
+    /*
+    function setCookie(name,value){
+        var Days = 30;
+        var exp = new Date();
+        exp.setTime(exp.getTime() + Days*24*60*60*1000);
+        document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+    }
+    function getCookie(name){
+        var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+
+        if(arr=document.cookie.match(reg))
+
+            return unescape(arr[2]);
+        else
+            return null;
+    }
+    function delCookie(name){
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1);
+        var cval=getCookie(name);
+        if(cval!=null)
+            document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+    }
+    var b = false;
+    if(b == 1){
+        $('#submit').val(getCookie('flag'));//更新一下答案
+        delCookie('flag');
+        b = 0;
+    }*/
+
+    /**
+     *AJAX提交答案
+     */
+    function submit(){
+        var aid = $('#aid').val();
+        var flag = $('#submit').val();
+        if(flag.length==0){
+            alert('Flag值不能为空');
+            return false;
+        }
+        //setCookie('flag',flag);//提交前先保存一下答案
+        $.ajax({
+            type:'post',
+            url:'/api/flag',
+            data:{aid:aid,flag:flag},
+            datatype:'json',
+            success:function(data){
+                var json = JSON.parse(data);
+                if(json.code == 0){
+                    alert('恭喜你答对了');
+                    $('#answer_area').html('<p class="text-right">你已经答对过此题</p>');
+                }else if(json.code == -1){
+                    alert('10s只能提交一次,请重试');
+                }else if(json.code == 1){
+                    alert('很遗憾你没有答对');
+                }else if(json.code == 2){
+                    alert('题目错误,请刷新重试');
+                }else if(json.code == 3){
+                    alert('你已经回答过该题');
+                }else if(json.code == 4){
+                    alert('比赛尚未开始或已经结束,无法继续答题');
+                }
+                return true;
+            },
+            error:function(){
+                alert('系统错误,请重新尝试');
+            }
+
+        });
+    }
+
+    var intDiff = 0;
+    $.ajax({
+        type:'get',
+        url:'/api/getstarttime',
+        async: false,
+        datatype:'json',
+        success:function(data){
+            var json = JSON.parse(data);
+            intDiff = parseInt(json.left_time);
+        },
+        error:function(){
+            alert('时间获取失败,请重新页面重试');
+        }
+    });
+
+    /**
+     * 倒计时
+     *
+     * @param intDiff
+     */
+    function timer(intDiff) {
+        window.setInterval(function () {
+            var day = 0,
+                    hour = 0,
+                    minute = 0,
+                    second = 0; //时间默认值
+            if (intDiff > 0) {
+                hour = Math.floor(intDiff / (60 * 60)) - (day * 24);
+                minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
+                second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
+            }
+            if (hour <= 9) hour = '0' + hour;
+            if (minute <= 9) minute = '0' + minute;
+            if (second <= 9) second = '0' + second;
+            var time = hour + ':' + minute + ':' + second;
+            $('#time').html('距离结束还有:' + time);
+            intDiff--;
+        }, 1000);
+    }
+    $(function () {
+        timer(intDiff);
+    });
+</script>
+{include file="index:bottom"}
