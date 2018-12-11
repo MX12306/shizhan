@@ -493,9 +493,6 @@ class App
      */
     public static function module($result, $config, $convert = null)
     {
-        if (!preg_match('/^[A-Za-z](\w|\.)*$/', $controller)) {
-            throw new HttpException(404, 'controller not exists:' . $controller);
-        }
         if (is_string($result)) {
             $result = explode('/', $result);
         }
