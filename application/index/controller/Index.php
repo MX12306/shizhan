@@ -104,10 +104,6 @@ class Index extends \think\Controller{
     public function ranking(){
         $scoreMod = new model\score();
         $this->assign('rankingLog',$scoreMod->showRanking(true));
-        $logMod = new model\log();
-        $zonshu = $logMod->where('uid', session('userID'))->count('yn');
-        $dacuo = $logMod->where('uid', session('userID'))->where('yn','0')->count('yn');
-        $dadui = $logMod->where('uid', session('userID'))->where('yn','1')->count('yn');
         return $this->fetch('index:ranking');
     }
 }

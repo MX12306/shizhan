@@ -1,4 +1,9 @@
 <?php
+// 检测程序安装
+if(!is_file(__DIR__ . '/install/install.lock')){
+    header('Location: ./install/index.php');
+    exit;
+}
 // 定义项目路径
 define('APP_PATH', __DIR__ . '/../application/');
 // 加载框架基础文件

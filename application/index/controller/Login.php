@@ -36,9 +36,6 @@ class Login extends \think\Controller{
      * 退出登录
      */
     public function outlogin(){
-        if(session('login') != 1){//没有登录过,还想注销？？？？
-            return $this->error('退出登录失败,当前没有任何登录信息');
-        }
         session_unset();
         return $this->success('已退出登录','/login');//退出后跳转到登陆页面
     }
