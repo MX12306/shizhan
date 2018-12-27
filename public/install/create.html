@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>安装程序 - 灵盾竞赛答题网站平台</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/install/ins.css">
+</head>
+
+<body>
+    <div class="top">
+        <div class="inwp cl">
+            <h2>
+                <a href="http://www.ld80.cn/"><img src="https://www.ld80.cn/zb_users/plugin/tx_backstage_color/img/logo.png"></a>
+                <ul>
+                    <li class="innumber innumberA">√</li>
+                    <li class="inword">使用协议</li>
+                </ul>
+                <ul>
+                    <li class="innumber innumberA">√</li>
+                    <li class="inword">环境检测</li>
+                </ul>
+                <ul>
+                    <li class="innumber innumberA">3</li>
+                    <li class="inword">创建数据</li>
+                </ul>
+                <ul>
+                    <li class="innumber">4</li>
+                    <li class="inword">安装完成</li>
+                </ul>
+            </h2>
+        </div>
+    </div>
+    <div class="content">
+        <div class="inwp cl">
+            <form class="layui-form layui-form-pane" action="./index.php?c=success" method="post">
+                <h2>创建数据库：</h2>
+
+                <div class="form-group">
+                    <label for="sql_Ip">数据库服务器IP地址</label>
+                    <input width="120px" type="text" class="form-control" id="sql_Ip" name="db_ip" value="localhost">
+                </div>
+                <div class="form-group">
+                    <label for="sql_Port">数据库服务器端口</label>
+                    <input type="text" class="form-control" id="sql_Port" name="db_port" value="3306">
+                </div>
+                <div class="form-group">
+                    <label for="sql_username">数据库账号</label>
+                    <input type="text" class="form-control" id="sql_username" name="db_username" value="root">
+                </div>
+                <div class="form-group">
+                    <label for="sql_password">数据库密码</label>
+                    <input type="text" class="form-control" id="sql_password" name="db_password">
+                </div>
+                <div class="form-group">
+                    <label for="sql_dbname">数据库名称</label>
+                    <input type="text" class="form-control" id="sql_dbname" name="db_dbname">
+                </div>
+                <div class="form-group">
+                    <label for="sql_prefix">表前缀</label>
+                    <input type="text" class="form-control" id="sql_prefix" name="db_prefix" value="ld_" >
+                </div>
+                <h2>管理员账号：</h2>
+                <div class="form-group">
+                    <label >后台管理用户名</label>
+                    <input type="text" class="form-control" name="admin_user" placeholder="至少包含4个字符，需以字母开头" >
+                </div>
+                <div class="form-group">
+                    <label >登录密码</label>
+                    <input type="password" class="form-control" name="admin_pass" placeholder="至少包含6个字符。可使用字母，数字和符号" >
+                </div>
+                <div class="form-group">
+                    <label >登录密码确认</label>
+                    <input type="password" class="form-control" name="admin_pass2" >
+                </div>
+                <a href="./index.php?c=test"><input  class="btn btn-danger" type="button" value="上一步"></a>
+                <input class="btn btn-success" type="submit" value="安装">
+            </form>
+
+        </div>
+    </div>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+</body>
+</html>
