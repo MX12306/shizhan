@@ -3,22 +3,12 @@ namespace app\index\model;
 
 use think\Model;
 class config extends Model{
-
-    /**
-     * 获取公告内容
-     *
-     * @return mixed
-     */
-    public function getAnnouncement(){
-        return $this->where('keys','announcement')->find()->data['value'];
-    }
-
     /**
      * 将config表的设置注册为配置
      *
      */
     public function startConfig(){
-        $ret = $this->where(1)->select();
+        $ret = $this->where(1)->cache('config')->select();
         foreach($ret as $key=>$value){
             config($value->data['keys'],$value->data['value']);
         }

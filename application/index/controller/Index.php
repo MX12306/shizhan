@@ -39,7 +39,7 @@ class Index extends \think\Controller{
             //没ID时使用公告作为首页
             $this->assign('display', 0);
             $this->assign('_title', '赛场公告');
-            $this->assign('content',$configMod->getAnnouncement());//获取config表的公告信息,作为默认页面
+            $this->assign('content',config('announcement'));//获取config表的公告信息,作为默认页面
         }else{
             //基本处理
             if($answerMod->yn_Answer($id) == false){//错误的题目ID 导致错误
