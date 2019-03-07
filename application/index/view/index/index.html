@@ -161,7 +161,7 @@
             data:{aid:aid,flag:flag},
             datatype:'json',
             success:function(data){
-                var json = JSON.parse(data);
+                var json = data;
                 if(json.code == 0){
                     alert('恭喜你答对了');
                     $('#answer_area').html('<p class="text-right">你已经答对过此题</p>');
@@ -192,7 +192,7 @@
         async: false,
         datatype:'json',
         success:function(data){
-            var json = JSON.parse(data);
+            var json = data;
             intDiff = parseInt(json.left_time);
         },
         error:function(){
