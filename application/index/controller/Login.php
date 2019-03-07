@@ -6,9 +6,17 @@ namespace app\index\controller;
  * Class Login
  * @package app\index\controller
  */
-use think\Session;
 use app\index\model;
+use think\Request;
+
 class Login extends \think\Controller{
+    function __construct(Request $request = null)
+    {
+        parent::__construct($request);
+        $configMod = new model\config();
+        $configMod->startConfig();
+    }
+
     /**
      * 登录页面
      *
@@ -18,16 +26,12 @@ class Login extends \think\Controller{
         if(session('login') == 1){//已经登录就302到首页
             $this->redirect('/');
         }
-        $configMod = new model\config();
-        $configMod->startConfig();
         $this->assign('title',config('title'));
         $this->assign('tips',config('tips'));
         return $this->fetch('login:login');//渲染登录页面模板
     }
 
     public function reg(){
-        $configMod = new model\config();
-        $configMod->startConfig();
         $this->assign('title',config('title'));
         $this->assign('tips',config('tips'));
         return $this->fetch('login:reg');
@@ -36,6 +40,7 @@ class Login extends \think\Controller{
      * 退出登录
      */
     public function outlogin(){
+        session(null);
         session_unset();
         return $this->success('已退出登录','/login');//退出后跳转到登陆页面
     }

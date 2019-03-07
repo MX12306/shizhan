@@ -6,6 +6,7 @@ namespace app\index\controller;
  * Class Api
  * @package app\index\controller
  */
+use think\Cache;
 use think\Request;
 use think\Session;
 use app\index\model\config;
@@ -26,7 +27,7 @@ class Api extends \think\Controller{
      */
     public function login(){
         if(session('login') == 1){
-            return $this->error('你已登录,请先退出登录!');
+            $this->redirect('/');
         }
         $user = input('post.user');
         $pass = input('post.password');
@@ -56,7 +57,7 @@ class Api extends \think\Controller{
             return $this->error('用户已存在');
         }
         if($userMod->addUser($user,$pass) == true){
-            return $this->error('注册成功','/login');
+            return $this->success('注册成功','/login');
         }
         return $this->error('注册失败,请重试');
     }
@@ -72,23 +73,22 @@ class Api extends \think\Controller{
 
         $aid = intval(Request::instance()->post('aid'));
         $flag = Request::instance()->post('flag');
-        header('Content-type:text/json');//设置输出头部
         //基础验证
         if($flag === ''){
-            return json_encode(['code' => 1]);//空内容视为错误答案
+            return json(['code' => 1]);//空内容视为错误答案
         }
 
         $answerMod = new model\answer();
         //验证题目
         if(!$answerMod->yn_Answer($aid)){
-            return json_encode(['code' => -2]);//题目不在/不让做
+            return json(['code' => -2]);//题目不在/不让做
         }
 
         $configMod = new model\config();
         $data = $configMod->getTimeInfo(true);
         if(config('open_time') == 1){
             if($data['left_time'] <= 0){
-                return json_encode(['code' => 4]);//超时,不能答题
+                return json(['code' => 4]);//超时,不能答题
             }
         }
 
@@ -100,7 +100,7 @@ class Api extends \think\Controller{
             if(($time - session('time')) > 10){
                 Session::set('time',time());//大于十秒,可以提交重新设置时间限制
             }else{
-                return json_encode(['code' => -1]);//10s只能提交一次
+                return json(['code' => -1]);//10s只能提交一次
             }
         }
 
@@ -111,7 +111,7 @@ class Api extends \think\Controller{
         if($scoreMod->yn_answer(
                 $userMod->getUserID(Session::get('user')),
                 $aid) == true){
-            return json_encode(['code' => '3']);
+            return json(['code' => '3']);
         }
 
         //验证答案
@@ -129,7 +129,7 @@ class Api extends \think\Controller{
                 $aid,//题目ID
                 date('H:i:s',time())
             );//添加积分表
-            return json_encode(['code' => 0]);//答对了
+            return json(['code' => 0]);//答对了
         }else{
             $logMod->insertData(
                 $userMod->getUserID(Session::get('user')),
@@ -137,7 +137,7 @@ class Api extends \think\Controller{
                 $flag,
                 date('H:i:s',time())
             );//添加到提交记录中
-            return json_encode(['code' => 1]);//答错了
+            return json(['code' => 1]);//答错了
         }
 
     }
@@ -190,7 +190,8 @@ class Api extends \think\Controller{
         }
         $id = Request::instance()->get('id');
         $configMod = new model\config();
-        $configMod->save(['value'=>$id],['keys'=>'timu']);
+        $configMod->where('keys','timu')->cache('config')->update(['value'=>$id]);
+        Cache::rm('allAnswer');
         $this->success("题目调度完成", '/admin.php/addclass');
     }
 

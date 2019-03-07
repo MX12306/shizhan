@@ -3,6 +3,7 @@ namespace app\index\controller;
 use app\index\model\answer;
 use app\index\model\AnswerCls;
 use app\index\model\config;
+use think\Cache;
 use think\Request;
 
 /**
@@ -97,6 +98,7 @@ class Admin extends \think\Controller{
                 }
             }
         }
+        Cache::rm('config');
         $this->success('更新完成', '/admin.php');
     }
 }

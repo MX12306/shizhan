@@ -68,7 +68,6 @@ if (@$_GET['c'] == 'success') {
                 }
             }
             $table_admin = $data['db_prefix'] . "user";
-            var_dump("UPDATE $table_admin SET `user` = '{$username}', password = '{$password}' WHERE id = 1");
             $link->query("UPDATE $table_admin SET `user` = '{$username}', password = '{$password}' WHERE id = 1");
             $link->close();
         }else{
