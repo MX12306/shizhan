@@ -64,7 +64,7 @@ class Admin extends \think\Controller{
 
         if($edit == false){
             $this->assign('name',$acModel->idGetName($cid));
-            $this->assign('t_list',$aModel->where('cid',$cid)->select());
+            $this->assign('t_list',$aModel->where('cid',$cid)->order('id desc')->select());
         }else{
             $data = $aModel->where('id', $id)->find();
             if (!empty($data)){

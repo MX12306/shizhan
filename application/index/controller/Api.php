@@ -149,7 +149,7 @@ class Api extends \think\Controller{
      */
     public function getstarttime(){
         $configMod = new model\config();
-        return json_encode($configMod->getTimeInfo(true));
+        return json($configMod->getTimeInfo(true));
     }
 
 //后台操作API
@@ -239,7 +239,7 @@ class Api extends \think\Controller{
         if(Request::instance()->post('edit') == 1){
             $id  = Request::instance()->post('id');
             if(!empty($id)){
-                $id = Request::instance()->post('id');
+                $id = intval(Request::instance()->post('id'));
                 $ret = $aModel->where('id', $id)->update([
                     'name'=>Request::instance()->post('name'),
                     'content'=>Request::instance()->post('content'),
@@ -247,6 +247,7 @@ class Api extends \think\Controller{
                     'score'=>Request::instance()->post('score'),
                 ]);
                 if($ret == 1){
+                    Cache::rm('answer_'.$id);
                     $this->success('更新成功','/admin.php/add?cid=' . $cid);
                 }
                 $this->error('更新失败');

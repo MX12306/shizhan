@@ -20,6 +20,7 @@ return [
     '/ranking' => 'index/index/ranking',
     '/score' => 'index/index/score',
 
+    'api/getanswer' => 'index/index/getAnswer',
     'api/register' => 'index/Api/reg',
     'api/login' => 'index/Api/login',
     'api/flag' => 'index/Api/flag',

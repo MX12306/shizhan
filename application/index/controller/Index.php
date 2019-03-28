@@ -32,46 +32,16 @@ class Index extends \think\Controller{
      * @return mixed|void
      */
     public function index(){
-        $id = intval(Request::instance()->get('id'));
         $answerMod = new model\answer();
-        $configMod = new model\config();
-        if(empty($id)){
-            //没ID时使用公告作为首页
-            $this->assign('display', 0);
-            $this->assign('_title', '赛场公告');
-            $this->assign('content',config('announcement'));//获取config表的公告信息,作为默认页面
-        }else{
-            //基本处理
-            if($answerMod->yn_Answer($id) == false){//错误的题目ID 导致错误
-                return $this->error('错误的ID,该题不存在/不可回答!', '/');
-            }
-            //时间处理
-            $timeData = $configMod->getTimeInfo();
-            if(config('open_time') == 1){
-                if($timeData['left_time'] <= 0){
-                    return $this->error('比赛时间尚未开始或比赛已结束', '/');
-                }
-            }
-            //赛题处理
-            $answerInfo = $answerMod->getAnswer($id);
-            $scoreMod = new model\score();
-            $a = $scoreMod->yn_answer(Session::get('userID'),$id);//检查题目是否已回答过
-            if($a == true){
-                $this->assign('yn', 0);//已答题
-            }else{
-                $this->assign('yn', 1);//没回答
-            }
-            //渲染处理
-            $this->assign('display', 1);//显示提交答案区域
-            $this->assign('id',$id);
-
-            $this->assign('_title', $answerInfo['name'].'('.$answerInfo['score'].'分)');//题目名称与分值
-            $this->assign('content',$answerInfo['content']);//题目内容
-        }
-
         $clsMod = new model\AnswerCls();//题目分类表
-        $this->assign('term_name',$clsMod->idGetName(config('timu'))['name']);//顶部标题
         $userMod = new model\user();
+        $this->assign('display', 0);
+        $this->assign('title', '赛场公告');
+        $this->assign('content',config('announcement'));//获取config表的公告信息,作为默认页面
+
+        $this->assign('term_name',$clsMod->idGetName(config('timu'))['name']);//顶部标题
+
+        //获取靶机信息
         $info = $userMod->getUserInfo(session('userID'));
         if($info !== null){
             $this->assign('info', $info);
@@ -79,6 +49,55 @@ class Index extends \think\Controller{
         $list = $answerMod->getAll();
         $this->assign('list',$list);//左侧题目列表区域
         return $this->fetch('index/index');//渲染赛题页面模板
+    }
+
+    public function getAnswer(){
+        $id = intval(Request::instance()->get('id'));
+        $configMod = new model\config();
+        if(empty($id)){
+            return json([
+                'code'=> 0,
+                'msg'=> '题目ID不能为0或空'
+            ]);
+        }
+        //实例化相关模型
+        $answerMod = new model\answer();
+        $scoreMod = new model\score();
+        $timeData = $configMod->getTimeInfo();
+        //验证时间
+        if(config('open_time') == 1){
+            if($timeData['left_time'] <= 0){
+                return json([
+                    'code'=> 0,
+                    'msg'=> '时间未到未能答题'
+                ]);
+            }
+        }
+        //验证题目是否符合条件
+        //提醒：题目有变动时记得刷新缓存或者删除
+        $data = $answerMod->where('visible',1)->where('cid', config('timu'))->where('id', $id)->cache('answer_'. $id)->find();
+        if(empty($data)){
+            return json([
+                'code'=> 0,
+                'msg'=> '题目不存在'
+            ]);
+        }
+        //数据有了,验证以下是否可以回答
+        if($scoreMod->where('cid', config('timu'))->where('uid',Session::get('userID'))->where('aid',$id)->count()){
+            $huida = 0;
+        }else{
+            $huida = 1;
+        }
+        $data = $data->getData();
+        //返回数据
+        return json([
+            'code'=> 200,
+            'huida'=> $huida,
+            'id'=> $data['id'],
+            'name'=>  $data['name'],
+            'content'=> $data['content'],
+            'score'=> $data['score']
+        ]);
     }
 
     /**

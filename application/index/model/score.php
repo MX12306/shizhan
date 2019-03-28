@@ -45,7 +45,7 @@ class score extends Model{
      * @return array
      */
     public function showRanking($source = false){
-        $get_data = $this->field('uid,sum(score) as score ')->where('cid', 5)->group('uid')->order('score desc')->buildSql();
+        $get_data = $this->field('uid,sum(score) as score ')->where('cid', config('timu'))->group('uid')->order('score desc')->buildSql();
         $res = $this->table($get_data.' rank, (SELECT @rownum:=0) r')->field('rank.*,@rownum:=@rownum+1 as rownum')->select();
         if($source == false){
             $data = [];
