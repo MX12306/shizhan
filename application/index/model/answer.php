@@ -59,7 +59,7 @@ class answer extends Model{
     }
 
     public function getAll(){
-        $r = $this->field('id,name')->where('cid', config('timu'))->where('visible',1)->cache('allAnswer')->select();
+        $r = $this->field('id,name')->where('cid', config('timu'))->where('visible',1)->cache('allAnswer')->order('id asc') ->select();
         return $r;
     }
 
