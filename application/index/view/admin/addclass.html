@@ -1,9 +1,17 @@
 {include file="admin:top"}
+<link rel="stylesheet" href="/css/jquery.mloading.css">
+<script src="/js/jquery.mloading.js"></script>
 <div class="container">
     <table class="table table-bordered table-hover">
         <caption>
             <h1>题目分类管理</h1>
-            <span><button type="submit" class="btn btn-success">导入题目</button></span>
+            <form id="uploadfile" action="" method="post" enctype="multipart/form-data" onSubmit="return false;">
+                <input style="display: inline" type="file" name="file" value="" />
+                <input style="display: inline" type="submit" id="upload" class="btn btn-success" value="导入题目"/>
+                <span  style="margin-right: 10px;" >
+                    <a href="/muban.xls">下载模板</a>
+                    </span>
+            </form>
         </caption>
         <thead>
         <tr>
@@ -38,11 +46,50 @@
 </div>
 
 <script>
+    if (!(window.File || window.FileReader || window.FileList || window.Blob)) {
+        alert('你妈喊你换Chrome浏览器啦');
+    }
+
+    $('#upload').click(function () {
+        var file = $('input[name="file"]').prop('files');
+        if(file.length ===0 || file.length >1){
+            alert('请选择文件');
+            return false;
+        }
+        var formData = new FormData();
+        formData.append("file", file[0]);
+        var loading = $("body").mLoading({
+            text:"文件正在上传"
+        });
+        $.ajax({
+            url: "{:url('/uploadfile')}",
+            data: formData,
+            type: "POST",
+            dataType: "json",
+            cache: false,
+            processData: false,
+            contentType: false,
+            success:function (data) {
+                if(data.code === 200){
+                    alert('导入成功');
+                    location.reload();
+                }else {
+                    alert(data.msg);
+                }
+                setTimeout(function () {
+                    loading.mLoading('destroy');
+                }, 1000);
+            },
+            error: function () {
+                loading.mLoading('destroy');
+                alert('文件上传遇到错误');
+            }
+
+        })
+    });
     function addclass() {
         var timuname = $('#timuname').val();
         if(timuname.length == 0){
-            alert("题目名称没写呢！！！！！！！");
-            alert("题目名称没写呢！！！！！！！");
             alert("题目名称没写呢！！！！！！！");
             return false;
         }
