@@ -52,6 +52,7 @@
         float:left;
     }
 </style>
+<link rel="stylesheet" href="/css/jquery.mloading.css">
 <h3 class="text-center">{$term_name|default="null"}</h3>
 <br />
 <div class="container">
@@ -94,11 +95,12 @@
             {$info|default="暂时未提供任何有关信息"}
         </div>
     </div>
-
 </div>
 <br >
 <br >
+<script src="/js/jquery.mloading.js"></script>
 <script>
+
     /*
     function setCookie(name,value){
         var Days = 30;
@@ -131,6 +133,9 @@
 
     $("#timu tr>td>a").click(function () {
         var id = $(this).data('id');
+        var loading = $("body").mLoading({
+            text:"题目正在加载,请耐心等待~~"
+        });
         $.ajax({
             type: 'get',
             url: "{:url('index/index/getAnswer')}?id=" + id,
@@ -147,10 +152,23 @@
                         var code = "<input id='aid' type='hidden' value='" + data.id +"'>"+"<textarea id='submit' class='form-control'></textarea>"+"<div class='input-group-btn'>"+"<button type='submit' class='btn btn-success btn-block' onclick='submit()'>提交答案</button> </div>";
                         $('#answer_area').prepend(code);
                     }
+                    setTimeout(function () {
+                        loading.mLoading('destroy');
+                    }, 1000);
+                    return true;
                 }
+                alert(data.msg);
+                loading.mLoading('destroy');
+                return false;
             },
             error: function () {
-                alert('请求遇到错误');
+                loading.mLoading({
+                    text:"请求时遇到错误"
+                });
+                setTimeout(function () {
+                    loading.mLoading('destroy');
+                }, 1000);
+                return false;
             }
         });
     });

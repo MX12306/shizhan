@@ -4,6 +4,9 @@ use think\Request;
 use app\index\model;
 use think\Session;
 
+require ROOT_PATH.'vendor'.DS.'PHPExcel.php';
+use PHPExcel;
+use PHPExcel_Reader_Excel5;
 /**
  * 赛题页面控制器
  *
@@ -39,7 +42,7 @@ class Index extends \think\Controller{
         $this->assign('title', '赛场公告');
         $this->assign('content',config('announcement'));//获取config表的公告信息,作为默认页面
 
-        $this->assign('term_name',$clsMod->idGetName(config('timu'))['name']);//顶部标题
+        //$this->assign('term_name',$clsMod->idGetName(config('timu'))['name']);//顶部标题
 
         //获取靶机信息
         $info = $userMod->getUserInfo(session('userID'));
@@ -121,8 +124,66 @@ class Index extends \think\Controller{
      * @return mixed
      */
     public function ranking(){
+        echo url('index/index/test');
         $scoreMod = new model\score();
         $this->assign('rankingLog',$scoreMod->showRanking(true));
         return $this->fetch('index:ranking');
+    }
+
+    public function test(){
+        $PHPReader =  new PHPExcel_Reader_Excel5();
+        $objReader = $PHPReader->load('D:\phpobj\shizhan\public\1.xls');
+        $currentSheet=$objReader->getSheet(0);
+        $allColumn=$currentSheet->getHighestColumn();
+        $allRow=$currentSheet->getHighestRow();
+        for($rowIndex=2;$rowIndex<=$allRow;$rowIndex++){
+            for($colIndex='A';$colIndex<=$allColumn;$colIndex++){
+                $addr = $colIndex.$rowIndex;
+                $cell = $currentSheet->getCell($addr)->getValue();
+                if($cell instanceof PHPExcel_RichText){
+                    $cell = $cell->__toString();
+                }
+                $data[$rowIndex][$colIndex] = $cell;
+            }
+        }
+        //转换数据
+        $answerMod = new model\answer();
+        $answerClsMod = new model\AnswerCls();
+        $acsname = '';//分类名称,记录上一个类名
+        $errorinfo = "";
+        $i = 2;
+        $insdata = [];
+        foreach ($data as $value){
+            if($acsname !== $value['A']){//如果上一个类名和当前类名一致,则为同一套题目
+                //不相同则查询当前类名是否存在,存在则直接返回类ID
+                $acsdata = $answerClsMod->where('name', $value['A'])->find();
+                if(empty($acsdata)){
+                    //创建
+                    $emmmm = $answerClsMod::create([
+                        'name'=> $value['A']
+                    ]);
+                    //验证是否创建成功
+                    if(!empty($emmmm)){
+                        $acsid = $emmmm->id;
+                    }else{
+                        $errorinfo = '创建题目分类失败,请检查名称:'.$value['A'];
+                        return false;
+                    }
+                }else{
+                    //返回ID
+                    $acsid = $acsdata->getData('id');
+                }
+            }
+            //拼接数据
+            $insdata[$i]['cid'] = $acsid;
+            $insdata[$i]['name'] = $value['B'];
+            $insdata[$i]['content'] = $value['C'];
+            $insdata[$i]['flag'] = $value['D'];
+            $insdata[$i]['score'] = intval($value['E']);
+            $insdata[$i]['visible'] = intval($value['F']);
+            $i = $i + 1;
+        }
+        $a23333 = $answerMod->saveAll($insdata);
+        var_dump($a23333);
     }
 }
