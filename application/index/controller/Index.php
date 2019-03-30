@@ -69,7 +69,7 @@ class Index extends \think\Controller{
             if($timeData['left_time'] <= 0){
                 return json([
                     'code'=> 0,
-                    'msg'=> '时间未到未能答题'
+                    'msg'=> '比赛时间未到或已结束'
                 ]);
             }
         }
@@ -126,4 +126,46 @@ class Index extends \think\Controller{
         return $this->fetch('index:ranking');
     }
 
+    public function getstatus(){
+        $configMod = new model\config();
+        $timeData = $configMod->getTimeInfo();
+        //验证时间
+        if(config('open_time') == 1){
+            if($timeData['left_time'] <= 0){
+                return json([
+                    'code'=> 0,
+                    'msg'=> '比赛时间未到或已结束',
+                ]);
+            }
+        }
+        $scoreMod = new model\score();
+        $answerMod = new model\answer();
+        //获取最新一条得分记录,取出aid uid
+        $scoreData = $scoreMod->field('aid,uid')->where('cid', config('timu'))->where(1)->order('id desc')->find();
+        if(empty($scoreData)){
+            return json([
+                'code' => 0,
+                'msg' => '暂时无最新信息',
+            ]);
+        }
+        //拿到数据后就要到题库里面取东西了
+        $scoreData = $scoreData->getData();
+        $data = $answerMod->where('cid', config('timu'))->where('id', $scoreData['aid'])->cache('answer_'. $scoreData['aid'])->find();
+        if(empty($data)){
+            return json([
+                'code' => 0,
+                'msg' => '题目故障',
+            ]);
+        }else{
+            $data = $data->getData();
+        }
+
+        return json([
+            'code' => 200,
+            'username'=> 'admin',
+            'answer' => $data['name'],
+            'score' => $data['score']
+        ]);
+
+    }
 }
