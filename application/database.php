@@ -10,7 +10,7 @@ return [
     'dsn'             => '',
     'params'          => [],
     'charset'         => 'utf8',
-    'prefix'          => 'sss_',
+    'prefix'          => 'ld_',
     'debug'           => false,
     'deploy'          => 0,
     'rw_separate'     => false,

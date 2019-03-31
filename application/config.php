@@ -13,7 +13,13 @@ return [
     // +----------------------------------------------------------------------
     // | 应用设置
     // +----------------------------------------------------------------------
+    'config'              => [
+        'rankingrefresh' => 4000 //排行榜刷新间隔
+        ,'interval' => 10 //flag提交间隔，单位秒
+        ,'allowtags' => '' //受允许的html标签
+        ,'version' => '2.7(Beta)'
 
+    ],
     // 应用调试模式
     'app_debug'              => true,
     // 应用Trace
@@ -93,7 +99,7 @@ return [
     // 路由配置文件（支持配置多个）
     'route_config_file'      => ['route'],
     // 是否强制使用路由
-    'url_route_must'         => true,
+    'url_route_must'         => false,
     // 域名部署
     'url_domain_deploy'      => false,
     // 域名根，如thinkphp.cn

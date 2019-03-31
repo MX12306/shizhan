@@ -10,20 +10,19 @@
 // +----------------------------------------------------------------------
 
 return [
-    '' => 'index/index/index',
-    'index' => 'index/index/index',
-    '/login' => 'index/login/login',
 
-    '/register' => 'index/login/reg',
-    '/outlogin' => 'index/login/outlogin',
+    //登陆操作
+    'login' => 'index/login/login',
+    'register' => 'index/login/reg',
+    'outlogin' => 'index/login/outlogin',
 
+    //赛场路由
     '/ranking' => 'index/index/ranking',
     '/score' => 'index/index/score',
     '/getstatus' => 'index/index/getstatus',
 
+    //api路由
     'api/getanswer' => 'index/index/getAnswer',
-    'api/register' => 'index/Api/reg',
-    'api/login' => 'index/Api/login',
     'api/flag' => 'index/Api/flag',
     'api/getstarttime' => 'index/Api/getstarttime',
     'api/add_timu_class' => 'index/Api/add_timu_class',

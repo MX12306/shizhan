@@ -17,11 +17,11 @@ class Index extends \think\Controller{
      */
     protected function start(){
         if(session('login') != 1){//没登录302到登陆页面
-            return $this->redirect('/login');
+            return $this->redirect(url('index/login/login'));
         }
         $configMod = new model\config();
         $configMod->startConfig();//初始化系统配置
-        $this->assign('title',config('title'));
+        $this->assign('title',remove_xss(config('title')));
         unset($configMod);
     }
 //////////////////////////////////////////////////////////////////////////
@@ -35,9 +35,9 @@ class Index extends \think\Controller{
         $clsMod = new model\AnswerCls();//题目分类表
         $userMod = new model\user();
         $this->assign('display', 0);
-        $this->assign('title', config('title'));
+        $this->assign('title', remove_xss(config('title')));
         $this->assign('_title', '赛场公告');
-        $this->assign('content',config('announcement'));//获取config表的公告信息,作为默认页面
+        $this->assign('content', remove_xss(config('announcement')));//获取config表的公告信息,作为默认页面
 
         $this->assign('term_name',$clsMod->idGetName(config('timu')));//顶部标题
 
@@ -94,8 +94,8 @@ class Index extends \think\Controller{
             'code'=> 200,
             'huida'=> $huida,
             'id'=> $data['id'],
-            'name'=>  $data['name'],
-            'content'=> $data['content'],
+            'name'=>  remove_xss($data['name']),
+            'content'=> remove_xss($data['content']),
             'score'=> $data['score']
         ]);
     }
@@ -121,11 +121,16 @@ class Index extends \think\Controller{
      * @return mixed
      */
     public function ranking(){
-        $scoreMod = new model\score();
-        $this->assign('rankingLog',$scoreMod->showRanking(true));
-        return $this->fetch('index:ranking');
+        return $this->fetch('ranking');
     }
 
+    /**
+     *获得最新状态
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function getstatus(){
         $configMod = new model\config();
         $timeData = $configMod->getTimeInfo();
@@ -162,10 +167,25 @@ class Index extends \think\Controller{
 
         return json([
             'code' => 200,
-            'username'=> 'admin',
-            'answer' => $data['name'],
+            'username'=> IdGetName($scoreData['uid']),
+            'answer' => remove_xss($data['name']),
             'score' => $data['score']
         ]);
+    }
 
+    /**
+     * 获取排名信息
+     * @return \think\response\Json
+     */
+    public function getranking(){
+        $scoreMod = new model\score();
+        $score_data = $scoreMod->showRanking(true);
+        $data = [];
+        foreach ($score_data as $value){
+            $value['answer'] = countScore($value['uid']);
+            $value['uid'] = IdGetName($value['uid']);
+            $data[] = $value;
+        }
+        return json($data);
     }
 }

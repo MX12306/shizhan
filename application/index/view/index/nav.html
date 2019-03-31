@@ -2,18 +2,24 @@
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#xiala" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
                 <a class="navbar-brand" href="/">{$title|default="灵盾网"}</a>
             </div>
-            <div>
+            <div class="collapse navbar-collapse" id="xiala">
                 <ul class="nav navbar-nav">
-                    <li><a href="/">题目</a></li>
-                    <li><a href="/ranking" target="_blank" >排名</a></li>
-                    <li><a href="/score">我的成绩</a></li>
+                    <li><a href="{:url('index/index/index')}">题目</a></li>
+                    <li><a href="{:url('index/index/ranking')}" target="_blank" >排名</a></li>
+                    <li><a href="{:url('index/index/score')}">我的成绩</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
 
                     <li><span class="navbar-brand">用户:{$Think.session.user|default=""}</span></li>
-                    <li><a href="/outlogin" style="color: #bb0000;">退出登录</a></li>
+                    <li><a href="{:url('index/login/outlogin')}" style="color: #bb0000;">退出登录</a></li>
                 </ul>
             </div>
         </div>

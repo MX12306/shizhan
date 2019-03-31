@@ -8,40 +8,117 @@ namespace app\index\controller;
  */
 use app\index\model;
 use think\Request;
-
+use think\Session;
 class Login extends \think\Controller{
+    /**
+     * 初始化配置信息
+     * Login constructor.
+     * @param Request|null $request
+     */
+    private $http;
+    protected $beforeActionList = [
+        'start' => [
+            'except' => 'outlogin'
+        ]
+    ];//访问该控制器前执行的方法
+
     function __construct(Request $request = null)
     {
         parent::__construct($request);
+        $this->http = Request::instance();
         $configMod = new model\config();
         $configMod->startConfig();
     }
-
-    /**
-     * 登录页面
-     *
-     * @return mixed|void
-     */
-    public function login(){
+    protected function start(){
         if(session('login') == 1){//已经登录就302到首页
             $this->redirect('/');
         }
-        $this->assign('title',config('title'));
-        $this->assign('tips',config('tips'));
-        return $this->fetch('login:login');//渲染登录页面模板
     }
 
-    public function reg(){
-        $this->assign('title',config('title'));
-        $this->assign('tips',config('tips'));
-        return $this->fetch('login:reg');
+    /**
+     * 登陆实现
+     * @return mixed|void
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function login(){
+        if($this->http->isPost()){
+            $data = $this->http->post();
+            //验证token
+            if(empty($data['token'])){
+                return $this->error('令牌错误');
+            }elseif (!form_token_verification($data['token'],'login')){
+                return $this->error('令牌验证失败');
+            }
+            //验证账户
+            if(empty($data['user'])||empty($data['password'])){
+                return $this->error('用户/密码不能为空');
+            }
+            $userMod = new model\user();
+            $ret = $userMod->field('id,user,password,isadmin')->where('user', $data['user'])->find();
+            if(empty($ret)){
+                return $this->error('用户名不存在');
+            }
+            //验证密码
+            if($ret->getData('password') === $data['password']){
+                Session::set('login', '1');
+                Session::set('user', $ret->getData('user'));
+                Session::set('userID', $ret->getData('id'));
+                Session::set('isadmin', $ret->getData('isadmin'));
+                $userMod->update(['login_ip' => request()->ip(), 'login_time' => time()],['user'=>$ret->getData('user')]);//更新记录
+                $this->redirect('/');//登陆成功,302到赛题页面
+            }
+            return $this->error('用户/密码错误');
+        }
+        //前端渲染
+        $token = form_token_create('login');
+        $this->assign('_token', $token);
+        $this->assign('title', remove_xss(config('title'))); //输出过滤 输入过滤
+        $this->assign('tips', remove_xss(config('tips'))); //输出过滤 输入过滤
+        return $this->fetch('login');
     }
+
+    /**
+     * 注册实现
+     * @return mixed|void
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function reg(){
+        if($this->http->isPost()){
+            $data = $this->http->post();
+            //验证token
+            if(empty($data['token'])){
+                return $this->error('令牌错误');
+            }elseif (!form_token_verification($data['token'],'reg')){
+                return $this->error('令牌验证失败');
+            }
+            if(empty($data['user'])||empty($data['password'])){
+                return $this->error('用户/密码不能为空');
+            }
+            $userMod = new model\user();
+            if($userMod->ifUser($data['user']) == false){
+                return $this->error('用户已存在');
+            }
+            if($userMod->addUser(remove_xss($data['user']),$data['password']) == true){
+                return $this->success('注册成功','/login');
+            }
+            return $this->error('注册失败,请重试');
+        }
+        $token = form_token_create('reg');
+        $this->assign('_token', $token);
+        $this->assign('title', remove_xss(config('title'))); //输出过滤 输入过滤
+        $this->assign('tips', remove_xss(config('tips'))); //输出过滤 输入过滤
+        return $this->fetch('reg');
+    }
+
     /**
      * 退出登录
      */
     public function outlogin(){
         session(null);
-        session_unset();
-        return $this->success('已退出登录','/login');//退出后跳转到登陆页面
+        $this->success('已退出登录',url(''));//退出后跳转到登陆页面
     }
 }

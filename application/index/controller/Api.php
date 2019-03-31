@@ -23,47 +23,6 @@ class Api extends \think\Controller{
         unset($configMod);
     }
     /**
-     * 登陆处理函数
-     */
-    public function login(){
-        if(session('login') == 1){
-            $this->redirect('/');
-        }
-        $user = input('post.user');
-        $pass = input('post.password');
-        if(empty($user)||empty($pass)){
-            return $this->error('用户/密码不能为空');
-        }
-        $userMod = new model\user();
-        switch ($userMod->login($user,$pass)){
-            case -1: return $this->error('用户不存在');break;//预防万一,写个break
-            case -2: return $this->error('用户/密码错误');break;
-            case 0:
-                $userMod->update(['login_ip' => request()->ip(), 'login_time' => time()],['user'=>$user]);//更新记录
-                $this->redirect('/');//登陆成功直接302到赛题页面
-                break;
-        }
-        return $this->error('系统错误,请稍后重试');
-    }
-
-    public function reg(){
-        $user = input('post.user');
-        $pass = input('post.password');
-        if(empty($user)||empty($pass)){
-            return $this->error('用户/密码不能为空');
-        }
-        $userMod = new model\user();
-        if($userMod->ifUser($user) == false){
-            return $this->error('用户已存在');
-        }
-        if($userMod->addUser($user,$pass) == true){
-            return $this->success('注册成功','/login');
-        }
-        return $this->error('注册失败,请重试');
-    }
-
-
-    /**
      * Flag提交处理函数
      */
     public function flag(){

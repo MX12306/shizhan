@@ -3,34 +3,7 @@ namespace app\index\model;
 use think\Model;
 use think\Session;
 class user extends Model{
-    /**
-     * 登录处理
-     *
-     * @param $user
-     * @param $password
-     * @return int
-     */
-    public function login($user,$password){
-        $ret = $this->where('user',$user)->find();
-        if(empty($ret->data)){
-            return -1;//用户不存在
-        }
-        if($ret->data['password'] == $password){
-            Session::set('login','1');
-            Session::set('user',$ret->data['user']);
-            Session::set('userID',$ret->data['id']);
-            Session::set('isadmin',$ret->data['isadmin']);
-            return 0;
-        }
-        return -2;
-    }
 
-    /**
-     * 用户名取ID
-     *
-     * @param $username
-     * @return mixed
-     */
     public function getUserID($username){
         $res = $this->where('user', $username)->find();
         if(empty($res->data)){
@@ -39,14 +12,9 @@ class user extends Model{
         return $res->data['id'];
     }
 
-    /**
-     * ID取用户名
-     *
-     * @param $id
-     * @return string
-     */
     public function getIDUser($id){
-        $res = $this->where('id', $id)->find();
+        $id = intval($id);
+        $res = $this->where('id', $id)->cache('idgetname_'.$id)->find();
         if(empty($res->data)){
             return 'NULL';
         }
@@ -55,9 +23,11 @@ class user extends Model{
 
     /**
      * 判断用户名是否存在
-     *
      * @param $user
      * @return bool
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
     public function ifUser($user){
         $res = $this->where('user',$user)->find();
