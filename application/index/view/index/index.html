@@ -155,26 +155,15 @@
         //setCookie('flag',flag);//提交前先保存一下答案
         $.ajax({
             type:'post',
-            url:'/api/flag',
-            data:{aid:aid,flag:flag},
+            url:"{:url('index/api/flag')}",
+            data:{
+                aid:aid,
+                flag:flag,
+                token: "{:form_token_create('flag')}"
+            },
             datatype:'json',
             success:function(data){
-                var json = data;
-                if(json.code == 0){
-                    alert('恭喜你答对了');
-                    $('#answer_area').html('<p class="text-right">你已经答对过此题</p>');
-                }else if(json.code == -1){
-                    alert('10s只能提交一次,请重试');
-                }else if(json.code == 1){
-                    alert('很遗憾你没有答对');
-                }else if(json.code == 2){
-                    alert('题目错误,请刷新重试');
-                }else if(json.code == 3){
-                    alert('你已经回答过该题');
-                }else if(json.code == 4){
-                    alert('比赛尚未开始或已经结束,无法继续答题');
-                }
-                return true;
+                alert(data.msg);
             },
             error:function(){
                 alert('系统错误,请重新尝试');

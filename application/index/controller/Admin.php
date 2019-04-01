@@ -194,4 +194,114 @@ class Admin extends \think\Controller{
         Cache::rm('config');
         $this->success('更新完成', '/admin.php');
     }
+
+    //后台操作API
+    /**
+     * 添加题目分类
+     */
+    public function add_timu_class(){
+        if(session('isadmin') != 1){
+            return $this->redirect('/login');
+        }
+        $name = Request::instance()->post('timuname');
+        $clsMod = new model\AnswerCls();
+        $clsMod->insert(['name' => $name]);
+        $this->success("添加成功", '/admin.php/addclass');
+    }
+
+    /**
+     * 删除题目分类
+     */
+    public function del_timu_class(){
+        if(session('isadmin') != 1){
+            return $this->redirect('/login');
+        }
+        $id = Request::instance()->get('id');
+        $clsMod = new model\AnswerCls();
+        $aMod = new model\answer();
+        $clsMod->where('id',$id)->delete();
+        $aMod->where('cid',$id)->delete();
+        $this->success("删除成功", '/admin.php/addclass');
+    }
+
+    /**
+     * 设置题目调度,设置当前要作答的题目类型ID
+     */
+    public function start_timu_class(){
+        if(session('isadmin') != 1){
+            return $this->redirect('/login');
+        }
+        $id = Request::instance()->get('id');
+        $configMod = new model\config();
+        $configMod->where('keys','timu')->cache('config')->update(['value'=>$id]);
+        Cache::rm('allAnswer');
+        $this->success("题目调度完成", '/admin.php/addclass');
+    }
+
+    /**
+     * 删除题目作答记录
+     */
+    public function del_timu_class_log(){
+        if(session('isadmin') != 1){
+            return $this->redirect('/login');
+        }
+        $id = Request::instance()->get('id');
+        $logMod = new model\log();
+        $scoreMod = new model\score();
+        $logMod->where('cid', $id)->delete();
+        $scoreMod->where('cid', $id)->delete();
+        $this->success("题目答题记录已删除", '/admin.php/addclass');
+    }
+
+    /**
+     * 删除题目
+     */
+    public function del_tanswer(){
+        if(session('isadmin') != 1){
+            return $this->redirect('/login');
+        }
+        $id = Request::instance()->get('id');
+        $cid = Request::instance()->get('cid');
+        $aMod = new model\answer();
+        $aMod->where('cid', $cid)->where('id',$id)->delete();
+        $this->success("题目已删除", '/admin.php/addclass');
+    }
+
+    /**
+     * 添加题目与编辑题目
+     */
+    public function add_answer(){
+        if(session('isadmin') != 1){
+            return $this->redirect('/login');
+        }
+
+        $_POST['score'] = intval(Request::instance()->post('score'));
+        //优先验证编辑模式
+        $cid = Request::instance()->post('cid');
+        $aModel = new model\answer($_POST);
+        if(Request::instance()->post('edit') == 1){
+            $id  = Request::instance()->post('id');
+            if(!empty($id)){
+                $id = intval(Request::instance()->post('id'));
+                $ret = $aModel->where('id', $id)->update([
+                    'name'=>Request::instance()->post('name'),
+                    'content'=>Request::instance()->post('content'),
+                    'flag'=>Request::instance()->post('flag'),
+                    'score'=>Request::instance()->post('score'),
+                ]);
+                if($ret == 1){
+                    Cache::rm('answer_'.$id);
+                    $this->success('更新成功','/admin.php/add?cid=' . $cid);
+                }
+                $this->error('更新失败');
+            }
+            $this->error('不规范的操作行为');
+        }
+
+        if($aModel->allowField(true)->save() == 1){
+            $this->success('添加成功');
+        }else{
+            $this->error('添加失败');
+        }
+    }
 }

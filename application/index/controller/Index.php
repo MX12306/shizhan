@@ -112,7 +112,7 @@ class Index extends \think\Controller{
         $this->assign('score',$info['score']);//分数
         $this->assign('logList',$scoreMod->getLog());//答题情况
 
-        return $this->fetch('index:score');
+        return $this->fetch('score');
     }
 
     /**
