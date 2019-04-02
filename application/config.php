@@ -17,7 +17,7 @@ return [
         'rankingrefresh' => 4000 //排行榜刷新间隔
         ,'interval' => 10 //flag提交间隔，单位秒
         ,'allowtags' => '' //受允许的html标签
-        ,'version' => '2.7(Beta)'
+        ,'version' => '2.9(Beta)'
 
     ],
     // 应用调试模式
