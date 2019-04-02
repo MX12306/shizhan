@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>小别致长得真东西！！！</title>
+    <title>灵盾网络安全竞赛答题平台</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/admin/admin.css">
     <!--[if lt IE 9]>
@@ -15,18 +15,17 @@
 </head>
 <body>
 <div class="top_logo">
-    <div class="container"><p>小别致长得真东西！！！</p></div>
+    <div class="container"><p>灵盾网络安全竞赛答题平台</p></div>
 </div>
 <ul class="top_nav">
     <div class="list son">
-        <li><a class="{$selected|default=""}" href="/admin.php">平台配置</a></li>
+        <li><a class="{$selected|default=""}" href="{:url('index/admin/index')}">平台配置</a></li>
     </div>
 
     <div class="list son">
         <li><a class="{$selected1|default=""} href="javascript:void(0)">添加题目</a></li>
         <div class="list-content">
-            <li><a href="/admin.php/addclass">创建题目分类</a></li>
-            <li><a href="/admin.php/add">添加题目</a></li>
+            <li><a href="{:url('index/admin/addclass')}">题目分类</a></li>
         </div>
     </div>
 

@@ -17,6 +17,6 @@ if(!is_file(__DIR__ . '/install/install.lock')){
 
 // 定义应用目录
 define('APP_PATH', __DIR__ . '/../application/');
-define('BIND_MODULE', 'index');
+//define('BIND_MODULE', 'index');
 // 加载框架引导文件
 require __DIR__ . '/../thinkphp/start.php';

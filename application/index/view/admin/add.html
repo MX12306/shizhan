@@ -1,7 +1,7 @@
 {include file="admin:top"}
 <div class="container">
     <div class="panel panel-default">
-        <form name="login" action="/api/add_answer" method="post" onsubmit="return tijiao()">
+        <form name="login" action="{:url('index/admin/add_answer')}" method="post" onsubmit="return tijiao()">
             <div class="panel-heading">
                 <h3 class="panel-title">为分类为:{$name['name']|default="题目编辑状态 不想显示"}</h3>
             </div>
@@ -54,8 +54,8 @@
             <th>{$vo.name}</th>
             <td>{$vo.content}</td>
             <td>
-                <a href="/admin.php/add?edit=1&id={$vo.id}&cid={$Think.get.cid}"><button type="button" class="btn btn-primary">编辑</button></a>
-                <a href="/api/del_tanswer?id={$vo.id}&cid={$Think.get.cid}"><button type="button" class="btn btn-danger">删除</button></a>
+                <a href="{:url('index/admin/add')}?edit=1&id={$vo.id}&cid={$Think.get.cid}"><button type="button" class="btn btn-primary">编辑</button></a>
+                <a href="{:url('index/admin/del_tanswer')}?id={$vo.id}&cid={$Think.get.cid}"><button type="button" class="btn btn-danger">删除</button></a>
             </td>
         </tr>
         {/volist}

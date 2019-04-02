@@ -1,7 +1,7 @@
 {include file="admin:top"}
 <div class="container">
     <caption><h1>平台配置</h1></caption>
-    <form method="post" action="/admin.php/save">
+    <form method="post" action="{:url('index/admin/save')}">
         <div class="form-group">
             <label for="name">平台标题</label>
             <input type="text" class="form-control" id="name" name="title" value="{:config('title')}">

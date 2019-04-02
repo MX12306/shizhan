@@ -22,7 +22,7 @@
         </thead>
         <tbody>
         <tr>
-            <form name="login" action="/api/add_timu_class" method="post" onsubmit="return addclass();">
+            <form name="login" action="{:url('index/admin/add_timu_class')}" method="post" onsubmit="return addclass();">
                 <th></th>
                 <td><input type="text" class="form-control" name="timuname" id="timuname" placeholder="name"></td>
                 <td><button type="submit" class="btn btn-success">创建题目</button></td>
@@ -33,10 +33,10 @@
             <th>{$vo.id}</th>
             <td>{$vo.name}</td>
             <td>
-                <a href="/admin.php/add?cid={$vo.id}"><button type="button" class="btn btn-info">往里塞题</button></a>
-                <a href="/api/del_timu_class?id={$vo.id}"><button type="button" class="btn btn-danger">删除题目</button></a>
-                <a href="/api/start_timu_class?id={$vo.id}"><button type="button" class="btn btn-primary">题目调度</button></a>
-                <a href="/api/del_timu_class_log?id={$vo.id}"><button type="button" class="btn btn-danger">删除所有答题记录</button></a>
+                <a href="{:url('index/admin/add')}?cid={$vo.id}"><button type="button" class="btn btn-info">题目管理</button></a>
+                <a href="{:url('index/admin/del_timu_class')}?id={$vo.id}"><button type="button" class="btn btn-danger">删除分类</button></a>
+                <a href="{:url('index/admin/start_timu_class')}?id={$vo.id}"><button type="button" class="btn btn-primary">启用赛题</button></a>
+                <a href="{:url('index/admin/del_timu_class_log')}?id={$vo.id}"><button type="button" class="btn btn-danger">删除所有答题记录</button></a>
             </td>
         </tr>
         {/volist}
@@ -62,7 +62,7 @@
             text:"文件正在上传"
         });
         $.ajax({
-            url: "{:url('/uploadfile')}",
+            url: "{:url('index/admin/uploadfile')}",
             data: formData,
             type: "POST",
             dataType: "json",

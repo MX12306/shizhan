@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 
 return [
-
+    '/' => 'index/index/index',
     //登陆操作
     'login' => 'index/login/login',
     'register' => 'index/login/reg',
@@ -25,13 +25,22 @@ return [
     'api/getanswer' => 'index/index/getAnswer',
     'api/flag' => 'index/Api/flag',
     'api/getstarttime' => 'index/Api/getstarttime',
-    'api/add_timu_class' => 'index/Api/add_timu_class',
-    'api/del_timu_class' => 'index/Api/del_timu_class',
-    'api/start_timu_class' => 'index/Api/start_timu_class',
-    'api/del_timu_class_log' => 'index/Api/del_timu_class_log',
-    'api/del_tanswer' => 'index/Api/del_tanswer',
-    'api/add_answer' => 'index/Api/add_answer',
-    'api/del_tanswer' => 'index/Api/del_tanswer',
-    'api/add_answer' => 'index/Api/add_answer',
+
+    //admin路由
+    'admin' => 'index/admin/index',
+    'admin/save' => 'index/admin/save',
+    'admin/add' => 'index/admin/add',
+    'admin/addclass' => 'index/admin/addclass'
+
+
+
+//    'api/add_timu_class' => 'index/Api/add_timu_class',
+//    'api/del_timu_class' => 'index/Api/del_timu_class',
+//    'api/start_timu_class' => 'index/Api/start_timu_class',
+//    'api/del_timu_class_log' => 'index/Api/del_timu_class_log',
+//    'api/del_tanswer' => 'index/Api/del_tanswer',
+//    'api/add_answer' => 'index/Api/add_answer',
+//    'api/del_tanswer' => 'index/Api/del_tanswer',
+//    'api/add_answer' => 'index/Api/add_answer',
 
 ];

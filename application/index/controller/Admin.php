@@ -3,6 +3,8 @@ namespace app\index\controller;
 use app\index\model\answer;
 use app\index\model\AnswerCls;
 use app\index\model\config;
+use app\index\model\log;
+use app\index\model\score;
 use think\Cache;
 use think\Request;
 require ROOT_PATH.'vendor'.DS.'PHPExcel.php';
@@ -187,12 +189,12 @@ class Admin extends \think\Controller{
         foreach ($_POST as $key => $value){
             foreach ($list as $v){
                 if($v === $key){
-                    $configMod->where('keys',$v)->update(['value'=>$value]);
+                    $configMod->where('keys',$v)->update(['value'=>remove_xss($value)]);
                 }
             }
         }
         Cache::rm('config');
-        $this->success('更新完成', '/admin.php');
+        $this->success('更新完成');
     }
 
     //后台操作API
@@ -200,28 +202,22 @@ class Admin extends \think\Controller{
      * 添加题目分类
      */
     public function add_timu_class(){
-        if(session('isadmin') != 1){
-            return $this->redirect('/login');
-        }
         $name = Request::instance()->post('timuname');
-        $clsMod = new model\AnswerCls();
+        $clsMod = new AnswerCls();
         $clsMod->insert(['name' => $name]);
-        $this->success("添加成功", '/admin.php/addclass');
+        $this->success("添加成功");
     }
 
     /**
      * 删除题目分类
      */
     public function del_timu_class(){
-        if(session('isadmin') != 1){
-            return $this->redirect('/login');
-        }
         $id = Request::instance()->get('id');
-        $clsMod = new model\AnswerCls();
-        $aMod = new model\answer();
+        $clsMod = new AnswerCls();
+        $aMod = new answer();
         $clsMod->where('id',$id)->delete();
         $aMod->where('cid',$id)->delete();
-        $this->success("删除成功", '/admin.php/addclass');
+        $this->success("删除成功");
     }
 
     /**
@@ -232,10 +228,10 @@ class Admin extends \think\Controller{
             return $this->redirect('/login');
         }
         $id = Request::instance()->get('id');
-        $configMod = new model\config();
+        $configMod = new config();
         $configMod->where('keys','timu')->cache('config')->update(['value'=>$id]);
         Cache::rm('allAnswer');
-        $this->success("题目调度完成", '/admin.php/addclass');
+        $this->success("题目调度完成");
     }
 
     /**
@@ -246,11 +242,11 @@ class Admin extends \think\Controller{
             return $this->redirect('/login');
         }
         $id = Request::instance()->get('id');
-        $logMod = new model\log();
-        $scoreMod = new model\score();
+        $logMod = new log();
+        $scoreMod = new score();
         $logMod->where('cid', $id)->delete();
         $scoreMod->where('cid', $id)->delete();
-        $this->success("题目答题记录已删除", '/admin.php/addclass');
+        $this->success("题目答题记录已删除");
     }
 
     /**
@@ -262,9 +258,9 @@ class Admin extends \think\Controller{
         }
         $id = Request::instance()->get('id');
         $cid = Request::instance()->get('cid');
-        $aMod = new model\answer();
+        $aMod = new answer();
         $aMod->where('cid', $cid)->where('id',$id)->delete();
-        $this->success("题目已删除", '/admin.php/addclass');
+        $this->success("题目已删除");
     }
 
     /**
@@ -278,7 +274,7 @@ class Admin extends \think\Controller{
         $_POST['score'] = intval(Request::instance()->post('score'));
         //优先验证编辑模式
         $cid = Request::instance()->post('cid');
-        $aModel = new model\answer($_POST);
+        $aModel = new answer($_POST);
         if(Request::instance()->post('edit') == 1){
             $id  = Request::instance()->post('id');
             if(!empty($id)){
@@ -291,7 +287,7 @@ class Admin extends \think\Controller{
                 ]);
                 if($ret == 1){
                     Cache::rm('answer_'.$id);
-                    $this->success('更新成功','/admin.php/add?cid=' . $cid);
+                    $this->success('更新成功',url('index/admin/add').'?cid=' . $cid);
                 }
                 $this->error('更新失败');
             }
