@@ -23,17 +23,13 @@
     </div>
 
     <div class="list son">
-        <li><a class="{$selected1|default=""} href="javascript:void(0)">添加题目</a></li>
+        <li><a class="{$selected1|default=""}" href="javascript:void(0)">添加题目</a></li>
         <div class="list-content">
             <li><a href="{:url('index/admin/addclass')}">题目分类</a></li>
         </div>
     </div>
 
     <div class="list son">
-        <li><a class="{$selected2|default=""} href="javascript:void(0)">用户管理</a></li>
-        <div class="list-content">
-            <li><a href="#">创建用户</a></li>
-            <li><a href="#">用户列表</a></li>
-        </div>
+        <li><a class="{$selected2|default=""}" href="{:url('index/admin/user')}">用户管理</a></li>
     </div>
 </ul>

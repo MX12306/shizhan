@@ -5,6 +5,7 @@ use app\index\model\AnswerCls;
 use app\index\model\config;
 use app\index\model\log;
 use app\index\model\score;
+use app\index\model\user;
 use think\Cache;
 use think\Request;
 require ROOT_PATH.'vendor'.DS.'PHPExcel.php';
@@ -24,22 +25,34 @@ class Admin extends \think\Controller{
      */
     protected function start(){
         if(session('login') != 1){//没登录302到登陆页面
-            return $this->redirect('/login');
+            $this->redirect('/login');
         }else{
             if(session('isadmin') != 1){
-                return $this->redirect('/login');
+                $this->redirect('/login');
             }
         }
         $configMod = new config();
         $configMod->startConfig();//初始化系统配置
         unset($configMod);
     }
+
+    /**
+     * 管理首页
+     * @return mixed
+     */
     public function index(){
 
         $this->assign('selected','selected');
         return $this->fetch('admin:admin');
     }
 
+    /**
+     * 添加分类接口
+     * @return mixed
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function addclass(){
         $this->assign('selected1','selected');
         $claModel = new AnswerCls();
@@ -47,6 +60,14 @@ class Admin extends \think\Controller{
         return $this->fetch('admin:addclass');
     }
 
+    /**
+     * 题目管理
+     * @return mixed|string
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function add(){
         $cid = Request::instance()->get('cid');
         $id = Request::instance()->get('id');
@@ -78,6 +99,16 @@ class Admin extends \think\Controller{
         return $this->fetch('admin:add');
     }
 
+    /**
+     * 模板上传
+     * @return \think\response\Json
+     * @throws \Exception
+     * @throws \PHPExcel_Exception
+     * @throws \PHPExcel_Reader_Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function uploadfile(){
         $file = request()->file('file');
         if (!$file){
@@ -169,14 +200,14 @@ class Admin extends \think\Controller{
         }
     }
 
+    /**
+     * 保存题目
+     */
     public function save(){
         $_POST['start_time'] = strtotime($_POST['start_time']);
         $_POST['stop_time'] = strtotime($_POST['stop_time']);
-        if(!empty($_POST['open_time'])){
-            $_POST['open_time'] = 1;
-        }else{
-            $_POST['open_time'] = 0;
-        }
+        $_POST['open_time'] = empty($_POST['open_time'])? 0: 1;
+        $_POST['reg_switch'] = empty($_POST['reg_switch'])? 0: 1;
         $configMod = new config();
         $list = [
             'title',
@@ -184,7 +215,8 @@ class Admin extends \think\Controller{
             'tips',
             'open_time',
             'start_time',
-            'stop_time'
+            'stop_time',
+            'reg_switch'
         ];
         foreach ($_POST as $key => $value){
             foreach ($list as $v){
@@ -195,6 +227,32 @@ class Admin extends \think\Controller{
         }
         Cache::rm('config');
         $this->success('更新完成');
+    }
+
+    public function user(){
+        $this->assign('selected2','selected');
+        return $this->fetch('user');
+    }
+
+    public function getUserList(){
+        $mod = new \app\common\model\user();
+        $data = $mod->select();
+        return json(
+            $data
+        );
+    }
+
+    public function deluser(){
+        $uid = Request::instance()->post('uid');
+        $mod = new user();
+        if($mod->where('id', $uid)->delete()){
+            return json(
+                ['code'=>200, 'msg'=>'用户已删除']
+            );
+        }
+        return json(
+            ['code'=>0, 'msg'=>'用户删除失败']
+        );
     }
 
     //后台操作API
@@ -224,9 +282,6 @@ class Admin extends \think\Controller{
      * 设置题目调度,设置当前要作答的题目类型ID
      */
     public function start_timu_class(){
-        if(session('isadmin') != 1){
-            return $this->redirect('/login');
-        }
         $id = Request::instance()->get('id');
         $configMod = new config();
         $configMod->where('keys','timu')->cache('config')->update(['value'=>$id]);
@@ -238,9 +293,6 @@ class Admin extends \think\Controller{
      * 删除题目作答记录
      */
     public function del_timu_class_log(){
-        if(session('isadmin') != 1){
-            return $this->redirect('/login');
-        }
         $id = Request::instance()->get('id');
         $logMod = new log();
         $scoreMod = new score();
@@ -253,9 +305,6 @@ class Admin extends \think\Controller{
      * 删除题目
      */
     public function del_tanswer(){
-        if(session('isadmin') != 1){
-            return $this->redirect('/login');
-        }
         $id = Request::instance()->get('id');
         $cid = Request::instance()->get('cid');
         $aMod = new answer();
@@ -267,10 +316,6 @@ class Admin extends \think\Controller{
      * 添加题目与编辑题目
      */
     public function add_answer(){
-        if(session('isadmin') != 1){
-            return $this->redirect('/login');
-        }
-
         $_POST['score'] = intval(Request::instance()->post('score'));
         //优先验证编辑模式
         $cid = Request::instance()->post('cid');

@@ -47,18 +47,18 @@ class Login extends \think\Controller{
             $data = $this->http->post();
             //验证token
             if(empty($data['token'])){
-                return $this->error('令牌错误');
+                $this->error('令牌错误');
             }elseif (!form_token_verification($data['token'],'login')){
-                return $this->error('令牌验证失败');
+                $this->error('令牌验证失败');
             }
             //验证账户
             if(empty($data['user'])||empty($data['password'])){
-                return $this->error('用户/密码不能为空');
+                $this->error('用户/密码不能为空');
             }
             $userMod = new model\user();
             $ret = $userMod->field('id,user,password,isadmin')->where('user', $data['user'])->find();
             if(empty($ret)){
-                return $this->error('用户名不存在');
+                $this->error('用户名不存在');
             }
             //验证密码
             if($ret->getData('password') === $data['password']){
@@ -69,7 +69,7 @@ class Login extends \think\Controller{
                 $userMod->update(['login_ip' => request()->ip(), 'login_time' => time()],['user'=>$ret->getData('user')]);//更新记录
                 $this->redirect('/');//登陆成功,302到赛题页面
             }
-            return $this->error('用户/密码错误');
+            $this->error('用户/密码错误');
         }
         //前端渲染
         $token = form_token_create('login');
@@ -91,21 +91,24 @@ class Login extends \think\Controller{
             $data = $this->http->post();
             //验证token
             if(empty($data['token'])){
-                return $this->error('令牌错误');
+                $this->error('令牌错误');
             }elseif (!form_token_verification($data['token'],'reg')){
-                return $this->error('令牌验证失败');
+                $this->error('令牌验证失败');
             }
             if(empty($data['user'])||empty($data['password'])){
-                return $this->error('用户/密码不能为空');
+                $this->error('用户/密码不能为空');
+            }
+            if(intval(config('reg_switch')) !== 1){
+                $this->error('系统当前不允许任何用户注册');
             }
             $userMod = new model\user();
             if($userMod->ifUser($data['user']) == false){
-                return $this->error('用户已存在');
+                $this->error('用户已存在');
             }
             if($userMod->addUser(remove_xss($data['user']),$data['password']) == true){
-                return $this->success('注册成功','/login');
+                $this->success('注册成功','/login');
             }
-            return $this->error('注册失败,请重试');
+            $this->error('注册失败,请重试');
         }
         $token = form_token_create('reg');
         $this->assign('_token', $token);

@@ -17,8 +17,17 @@ return [
         'rankingrefresh' => 4000 //排行榜刷新间隔
         ,'interval' => 10 //flag提交间隔，单位秒
         ,'allowtags' => '' //受允许的html标签
-        ,'version' => '2.9(Beta)'
+        ,'version' => '2.9(Beta)',
+        'reg_info' => [ //先搁着
+            [
+                'type'=> 'text',
+                'name'=> 'info', //name和ID相同
+                'icon'=> '',//图标
+                'placeholder' => '' //灰色提示
 
+            ],
+            []
+        ]
     ],
     // 应用调试模式
     'app_debug'              => true,

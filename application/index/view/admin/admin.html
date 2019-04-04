@@ -16,7 +16,16 @@
             <label for="tips">前台提示</label>
             <textarea class="form-control" id="tips" name="tips" rows="6">{:config('tips')}</textarea>
         </div>
+        <div class="checkbox">
+            <label>
+                {if condition="config('reg_switch') == 0"}
+                <input name="reg_switch" type="checkbox"> 开放注册
+                {else /}
+                <input name="ereg_switch" type="checkbox" checked="checked"> 开放注册
+                {/if}
 
+            </label>
+        </div>
         <div class="checkbox">
             <label>
                 {if condition="config('open_time') == 0"}
