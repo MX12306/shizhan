@@ -69,8 +69,8 @@ class Admin extends \think\Controller{
      * @throws \think\exception\DbException
      */
     public function add(){
-        $cid = Request::instance()->get('cid');
-        $id = Request::instance()->get('id');
+        $cid = intval(Request::instance()->get('cid'));
+        $id = intval(Request::instance()->get('id'));
         if(Request::instance()->get('edit') != 1){ #编辑状态不为1时 检查是否带有CID 分类ID
             if(empty($cid)){
                 return "暂时不接受空访问";
@@ -171,8 +171,8 @@ class Admin extends \think\Controller{
                 }
                 //拼接数据
                 $insdata[$i]['cid'] = $acsid;
-                $insdata[$i]['name'] = $value['B'];
-                $insdata[$i]['content'] = $value['C'];
+                $insdata[$i]['name'] = string_htmlspecialchars($value['B']);
+                $insdata[$i]['content'] = remove_xss($value['C']);
                 $insdata[$i]['flag'] = $value['D'];
                 $insdata[$i]['score'] = intval($value['E']);
                 $insdata[$i]['visible'] = intval($value['F']);
@@ -201,13 +201,14 @@ class Admin extends \think\Controller{
     }
 
     /**
-     * 保存题目
+     * 保存配置
      */
     public function save(){
         $_POST['start_time'] = strtotime($_POST['start_time']);
         $_POST['stop_time'] = strtotime($_POST['stop_time']);
         $_POST['open_time'] = empty($_POST['open_time'])? 0: 1;
         $_POST['reg_switch'] = empty($_POST['reg_switch'])? 0: 1;
+        $_POST['display_ranking'] = empty($_POST['display_ranking'])? 0: 1;
         $configMod = new config();
         $list = [
             'title',
@@ -216,7 +217,9 @@ class Admin extends \think\Controller{
             'open_time',
             'start_time',
             'stop_time',
-            'reg_switch'
+            'reg_switch',
+            'display_ranking'
+
         ];
         foreach ($_POST as $key => $value){
             foreach ($list as $v){
@@ -262,7 +265,7 @@ class Admin extends \think\Controller{
     public function add_timu_class(){
         $name = Request::instance()->post('timuname');
         $clsMod = new AnswerCls();
-        $clsMod->insert(['name' => $name]);
+        $clsMod->insert(['name' =>  string_htmlspecialchars($name)]);
         $this->success("添加成功");
     }
 
@@ -271,6 +274,7 @@ class Admin extends \think\Controller{
      */
     public function del_timu_class(){
         $id = Request::instance()->get('id');
+        $id = intval($id);
         $clsMod = new AnswerCls();
         $aMod = new answer();
         $clsMod->where('id',$id)->delete();
@@ -283,6 +287,7 @@ class Admin extends \think\Controller{
      */
     public function start_timu_class(){
         $id = Request::instance()->get('id');
+        $id = intval($id);
         $configMod = new config();
         $configMod->where('keys','timu')->cache('config')->update(['value'=>$id]);
         Cache::rm('allAnswer');
@@ -294,6 +299,7 @@ class Admin extends \think\Controller{
      */
     public function del_timu_class_log(){
         $id = Request::instance()->get('id');
+        $id = intval($id);
         $logMod = new log();
         $scoreMod = new score();
         $logMod->where('cid', $id)->delete();
@@ -305,8 +311,8 @@ class Admin extends \think\Controller{
      * 删除题目
      */
     public function del_tanswer(){
-        $id = Request::instance()->get('id');
-        $cid = Request::instance()->get('cid');
+        $id = intval(Request::instance()->get('id'));
+        $cid = intval(Request::instance()->get('cid'));
         $aMod = new answer();
         $aMod->where('cid', $cid)->where('id',$id)->delete();
         $this->success("题目已删除");

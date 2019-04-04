@@ -17,9 +17,9 @@ return [
     'outlogin' => 'index/login/outlogin',
 
     //赛场路由
-    '/ranking' => 'index/index/ranking',
-    '/score' => 'index/index/score',
-    '/getstatus' => 'index/index/getstatus',
+    'ranking' => 'index/index/ranking',
+    'score' => 'index/index/score',
+    'getstatus' => 'index/index/getstatus',
 
     //api路由
     'api/getanswer' => 'index/index/getAnswer',

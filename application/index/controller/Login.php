@@ -45,6 +45,7 @@ class Login extends \think\Controller{
     public function login(){
         if($this->http->isPost()){
             $data = $this->http->post();
+            $data['user'] = string_htmlspecialchars($data['user']);
             //验证token
             if(empty($data['token'])){
                 $this->error('令牌错误');
@@ -105,7 +106,7 @@ class Login extends \think\Controller{
             if($userMod->ifUser($data['user']) == false){
                 $this->error('用户已存在');
             }
-            if($userMod->addUser(remove_xss($data['user']),$data['password']) == true){
+            if($userMod->addUser(string_htmlspecialchars($data['user']),$data['password']) == true){
                 $this->success('注册成功','/login');
             }
             $this->error('注册失败,请重试');
@@ -122,6 +123,6 @@ class Login extends \think\Controller{
      */
     public function outlogin(){
         session(null);
-        $this->success('已退出登录',url(''));//退出后跳转到登陆页面
+        $this->success('已退出登录',url('index/login/login'));//退出后跳转到登陆页面
     }
 }

@@ -28,7 +28,7 @@ class Api extends \think\Controller{
 
     protected function start(){
         if(session('login') != 1){//没登录302到登陆页面
-            return $this->redirect(url('index/login/login'));
+            $this->redirect(url('index/login/login'));
         }
     }
     /**
@@ -37,11 +37,17 @@ class Api extends \think\Controller{
     public function flag(){
         $aid = intval(Request::instance()->post('aid'));
         $flag = Request::instance()->post('flag');
+        $token = Request::instance()->post('token');
+        if(empty($token)){
+            $this->error('令牌错误');
+        }elseif (!form_token_verification($token,'flag',true)){
+            $this->error('令牌验证失败');
+        }
         //验证时间
         $data = $this->configMod->getTimeInfo(true);
         if(config('open_time') == 1){
             if($data['left_time'] <= 0){
-                return json(['code' => 4]);//超时,不能答题
+                return json(['code' => 0, 'msg' => '已结束']);//超时,不能答题
             }
         }
         //基础验证
@@ -81,7 +87,7 @@ class Api extends \think\Controller{
             $logMod->insertData(
                 Session::get('userID'),//用户名
                 $aid,//题目ID
-                $flag,//答案
+                string_htmlspecialchars($flag),//答案
                 date('H:i:s',time()),
                 1//是否答对
             );//添加到提交记录中
@@ -99,7 +105,9 @@ class Api extends \think\Controller{
                 $flag,
                 date('H:i:s',time())
             );//添加到提交记录中
-            return json(['code'=>0, 'msg'=>'很遗憾,离答案不远了']);//答错了
+            $msg_rows = count(config('config.error_flag_msg')) - 1;
+            $msg = empty(config('config.error_flag_msg')[rand(0,$msg_rows)])? '答案错误':config('config.error_flag_msg')[rand(0,$msg_rows)];
+            return json(['code'=>0, 'msg'=>$msg]);//答错了
         }
 
     }

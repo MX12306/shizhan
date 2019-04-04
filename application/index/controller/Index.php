@@ -21,7 +21,7 @@ class Index extends \think\Controller{
         }
         $configMod = new model\config();
         $configMod->startConfig();//初始化系统配置
-        $this->assign('title',remove_xss(config('title')));
+        $this->assign('title',string_htmlspecialchars(config('title')));
         unset($configMod);
     }
 //////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ class Index extends \think\Controller{
         $clsMod = new model\AnswerCls();//题目分类表
         $userMod = new model\user();
         $this->assign('display', 0);
-        $this->assign('title', remove_xss(config('title')));
+        //$this->assign('title', string_htmlspecialchars(config('title')));
         $this->assign('_title', '赛场公告');
         $this->assign('content', remove_xss(config('announcement')));//获取config表的公告信息,作为默认页面
 
@@ -44,15 +44,16 @@ class Index extends \think\Controller{
         //获取靶机信息
         $info = $userMod->getUserInfo(session('userID'));
         if($info !== null){
-            $this->assign('info', $info);
+            $this->assign('info', remove_xss($info));
         }
         $list = $answerMod->getAll();
         $this->assign('list',$list);//左侧题目列表区域
-        return $this->fetch('index/index');//渲染赛题页面模板
+        return $this->fetch('index');//渲染赛题页面模板
     }
 
     public function getAnswer(){
         $id = intval(Request::instance()->get('id'));
+        $id = intval($id);
         $configMod = new model\config();
         if(empty($id)){
             return json([
@@ -94,7 +95,7 @@ class Index extends \think\Controller{
             'code'=> 200,
             'huida'=> $huida,
             'id'=> $data['id'],
-            'name'=>  remove_xss($data['name']),
+            'name'=> string_htmlspecialchars($data['name']),
             'content'=> remove_xss($data['content']),
             'score'=> $data['score']
         ]);
@@ -121,6 +122,9 @@ class Index extends \think\Controller{
      * @return mixed
      */
     public function ranking(){
+        if(session('isadmin') !== 1 && config('display_ranking') != 1){
+            return '排行榜页面暂时未对普通用户开放';
+        }
         return $this->fetch('ranking');
     }
 
@@ -132,6 +136,12 @@ class Index extends \think\Controller{
      * @throws \think\exception\DbException
      */
     public function getstatus(){
+        if(session('isadmin') !== 1 && config('display_ranking') != 1){
+            return json([
+                'code'=> 0,
+                'msg'=> '排行榜页面暂时未对普通用户开放',
+            ]);
+        }
         $configMod = new model\config();
         $timeData = $configMod->getTimeInfo();
         //验证时间
@@ -168,7 +178,7 @@ class Index extends \think\Controller{
         return json([
             'code' => 200,
             'username'=> IdGetName($scoreData['uid']),
-            'answer' => remove_xss($data['name']),
+            'answer' => string_htmlspecialchars($data['name']),
             'score' => $data['score']
         ]);
     }
@@ -178,6 +188,12 @@ class Index extends \think\Controller{
      * @return \think\response\Json
      */
     public function getranking(){
+        if(session('isadmin') !== 1 && config('display_ranking') != 1){
+            return json([
+                'code'=> 0,
+                'msg'=> '排行榜页面暂时未对普通用户开放',
+            ]);
+        }
         $scoreMod = new model\score();
         $score_data = $scoreMod->showRanking(true);
         $data = [];

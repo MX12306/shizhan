@@ -50,6 +50,19 @@ if (@$_GET['c'] == 'success') {
                 $error = addslashes($error);
                 die("<script>alert('数据库链接失败:$error');history.go(-1)</script>");
             }
+            if (function_exists('curl_init')){
+                $curl = curl_init();
+                //统计接口地址
+                //请勿搞破坏谢谢~
+                curl_setopt($curl, CURLOPT_URL, "http://api.ld80.cn/api/index/sendcountinfo/appkey/33483377c35e8682817c66b139e6b39a/type/add/domain/{$_SERVER['HTTP_HOST']}.html");
+                curl_setopt($curl, CURLOPT_HEADER, 0);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+                $data = curl_exec($curl);
+                curl_close($curl);
+                var_dump(json_decode($data));
+            }else{
+                die("<script>alert('缺少curl扩展!');history.go(-1)</script>");
+            }
             // 设置字符集
             $link->query("SET NAMES 'utf8'");
             $link->server_info > 5.0 or die("<script>alert('请将您的mysql升级到5.0以上');history.go(-1)</script>");
@@ -108,10 +121,5 @@ php;
 
         require './success.html';
 		@touch('./install.lock');
-		//向作者发送统计信息,请勿删除
-		@file_get_contents("http://api.ld80.cn/api/index/sendcountinfo/appkey/33483377c35e8682817c66b139e6b39a/type/add/domain/{$_SERVER['HTTP_HOST']}.html");
     }
-//统计接口地址
-//请勿搞破坏谢谢~
-//http://api.ld80.cn/api/index/sendcountinfo/appkey/33483377c35e8682817c66b139e6b39a/type/add/domain/{$_SERVER['HTTP_HOST']}.html
 }

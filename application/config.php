@@ -15,9 +15,14 @@ return [
     // +----------------------------------------------------------------------
     'config'              => [
         'rankingrefresh' => 4000 //排行榜刷新间隔
-        ,'interval' => 10 //flag提交间隔，单位秒
-        ,'allowtags' => '' //受允许的html标签
-        ,'version' => '2.9(Beta)',
+        ,'interval' => 1 //flag提交间隔，单位秒
+        ,'allowtags' => 'a|p|pre|span|img|font|br|h' //受允许的html标签
+        ,'version' => '2.9(Beta)',  //程序版本
+        'error_flag_msg' => [ //自定义回答错误提示语
+            '很遗憾答案是错的!',
+            '再加把劲!!',
+            '还差一点哦!',
+        ],
         'reg_info' => [ //先搁着
             [
                 'type'=> 'text',

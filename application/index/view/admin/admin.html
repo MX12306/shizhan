@@ -21,7 +21,17 @@
                 {if condition="config('reg_switch') == 0"}
                 <input name="reg_switch" type="checkbox"> 开放注册
                 {else /}
-                <input name="ereg_switch" type="checkbox" checked="checked"> 开放注册
+                <input name="reg_switch" type="checkbox" checked="checked"> 开放注册
+                {/if}
+
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                {if condition="config('display_ranking') == 0"}
+                <input name="display_ranking" type="checkbox"> 开放排行榜页面
+                {else /}
+                <input name="display_ranking" type="checkbox" checked="checked"> 开放排行榜页面
                 {/if}
 
             </label>
