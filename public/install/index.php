@@ -53,7 +53,6 @@ if (@$_GET['c'] == 'success') {
             $link->query("SET NAMES 'utf8'");
             $link->server_info > 5.0 or die("<script>alert('请将您的mysql升级到5.0以上');history.go(-1)</script>");
             // 创建数据库并选中
-            var_dump($data['db_dbname']);
             if (!$link->select_db($data['db_dbname'])) {
                 $create_sql = 'CREATE DATABASE IF NOT EXISTS ' . $data['db_dbname'] . ' DEFAULT CHARACTER SET utf8;';
                 $link->query($create_sql) or die('创建数据库失败');
