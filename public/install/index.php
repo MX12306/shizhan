@@ -88,7 +88,8 @@ if (@$_GET['c'] == 'success') {
                 }
             }
             $table_admin = $data['db_prefix'] . "user";
-            $link->query("UPDATE $table_admin SET `user` = '{$username}', password = '{$password}' WHERE id = 1");
+            $sql = "INSERT INTO $table_admin (`user`, `password`, `isadmin`) VALUES ('{$username}', '{$password}', 1)";
+            $link->query($sql);
             $link->close();
         }else{
             die("<script>alert('缺少mysqli扩展!');history.go(-1)</script>");
