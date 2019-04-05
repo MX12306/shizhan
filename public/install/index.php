@@ -37,7 +37,6 @@ if (@$_GET['c'] == 'success') {
         if ($data['admin_pass'] != $data['admin_pass2']) {
             die("<script>alert('两次输入的密码不一致');history.go(-1)</script>");
         }
-        $_SESSION['adminusername'] = $data['admin_user'];
         // 生成管理员
         $password = '';
         $username = $data['admin_user'];
@@ -50,6 +49,17 @@ if (@$_GET['c'] == 'success') {
                 $error = addslashes($error);
                 die("<script>alert('数据库链接失败:$error');history.go(-1)</script>");
             }
+            // 设置字符集
+            $link->query("SET NAMES 'utf8'");
+            $link->server_info > 5.0 or die("<script>alert('请将您的mysql升级到5.0以上');history.go(-1)</script>");
+            // 创建数据库并选中
+            var_dump($data['db_dbname']);
+            if (!$link->select_db($data['db_dbname'])) {
+                $create_sql = 'CREATE DATABASE IF NOT EXISTS ' . $data['db_dbname'] . ' DEFAULT CHARACTER SET utf8;';
+                $link->query($create_sql) or die('创建数据库失败');
+                $link->select_db($data['db_dbname']);
+            }
+
             if (function_exists('curl_init')){
                 $curl = curl_init();
                 //统计接口地址
@@ -57,10 +67,10 @@ if (@$_GET['c'] == 'success') {
                 curl_setopt($curl, CURLOPT_URL, "http://api.ld80.cn/api/index/sendcountinfo/appkey/33483377c35e8682817c66b139e6b39a/type/add/domain/{$_SERVER['HTTP_HOST']}.html");
                 curl_setopt($curl, CURLOPT_HEADER, 0);
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-                $data = curl_exec($curl);
+                $data1 = curl_exec($curl);
                 curl_close($curl);
-                if($data){
-                    $json_data = json_decode($data);
+                if($data1){
+                    $json_data = json_decode($data1);
                     if($json_data == null){
                         echo "<script>alert('统计失败');</script>";
                     }
@@ -69,15 +79,6 @@ if (@$_GET['c'] == 'success') {
                 }
             }else{
                 die("<script>alert('缺少curl扩展!');history.go(-1)</script>");
-            }
-            // 设置字符集
-            $link->query("SET NAMES 'utf8'");
-            $link->server_info > 5.0 or die("<script>alert('请将您的mysql升级到5.0以上');history.go(-1)</script>");
-            // 创建数据库并选中
-            if (!$link->select_db($data['db_dbname'])) {
-                $create_sql = 'CREATE DATABASE IF NOT EXISTS ' . $data['db_dbname'] . ' DEFAULT CHARACTER SET utf8;';
-                $link->query($create_sql) or die('创建数据库失败');
-                $link->select_db($data['db_dbname']);
             }
             // 导入sql数据并创建表
             $shujuku_str = file_get_contents('./install.sql');
