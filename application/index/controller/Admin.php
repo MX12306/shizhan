@@ -411,7 +411,7 @@ class Admin extends \think\Controller{
             $this->error('不规范的操作行为');
         }
 
-        if($aModel->allowField(['name','content', 'flag', 'score', 'visible'])->save() == 1){
+        if($aModel->allowField(['cid', 'name','content', 'flag', 'score', 'visible'])->save() == 1){
             $this->success('添加成功');
         }else{
             $this->error('添加失败');
