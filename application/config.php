@@ -17,7 +17,7 @@ return [
         'rankingrefresh' => 4000 //排行榜刷新间隔
         ,'interval' => 1 //flag提交间隔，单位秒
         ,'allowtags' => 'a|p|pre|span|img|font|br|h' //受允许的html标签
-        ,'version' => '2.9(Beta)',  //程序版本
+        ,'version' => '3.0',  //程序版本
         'error_flag_msg' => [ //自定义回答错误提示语
             '很遗憾答案是错的!',
             '再加把劲!!',
@@ -35,7 +35,7 @@ return [
         ]
     ],
     // 应用调试模式
-    'app_debug'              => true,
+    'app_debug'              => false,
     // 应用Trace
     'app_trace'              => false,
     // 应用模式状态

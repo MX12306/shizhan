@@ -59,7 +59,14 @@ if (@$_GET['c'] == 'success') {
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
                 $data = curl_exec($curl);
                 curl_close($curl);
-                var_dump(json_decode($data));
+                if($data){
+                    $json_data = json_decode($data);
+                    if($json_data == null){
+                        echo "<script>alert('统计失败');</script>";
+                    }
+                }else{
+                    die("<script>alert('请联网进行安装');history.go(-1)</script>");
+                }
             }else{
                 die("<script>alert('缺少curl扩展!');history.go(-1)</script>");
             }
@@ -74,7 +81,7 @@ if (@$_GET['c'] == 'success') {
             }
             // 导入sql数据并创建表
             $shujuku_str = file_get_contents('./install.sql');
-            $sql_array = preg_split("/;[\r\n]+/", str_replace('sx_', $data['db_prefix'], $shujuku_str));
+            $sql_array = preg_split("/;[\r\n]+/", str_replace('ld_', $data['db_prefix'], $shujuku_str));
             foreach ($sql_array as $k => $v) {
                 if (!empty($v)) {
                     $link->query($v);

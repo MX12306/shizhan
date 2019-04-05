@@ -41,7 +41,6 @@ class Admin extends \think\Controller{
      * @return mixed
      */
     public function index(){
-
         $this->assign('selected','selected');
         return $this->fetch('admin:admin');
     }
@@ -82,11 +81,11 @@ class Admin extends \think\Controller{
             }
             $edit = true;
         }
-
         $aModel = new answer();
         $acModel = new AnswerCls();
         $this->assign('edit', $edit);
 
+        $this->assign('acsname', $acModel->where('id', $cid)->find()->getData('name'));
         if($edit == false){
             $this->assign('name',$acModel->idGetName($cid));
             $this->assign('t_list',$aModel->where('cid',$cid)->order('id desc')->select());
@@ -232,11 +231,19 @@ class Admin extends \think\Controller{
         $this->success('更新完成');
     }
 
+    /**
+     * 用户管理
+     * @return mixed
+     */
     public function user(){
         $this->assign('selected2','selected');
         return $this->fetch('user');
     }
 
+    /**
+     * 获取用户列表
+     * @return \think\response\Json
+     */
     public function getUserList(){
         $mod = new \app\common\model\user();
         $data = $mod->select();
@@ -245,6 +252,10 @@ class Admin extends \think\Controller{
         );
     }
 
+    /**
+     * 删除用户
+     * @return \think\response\Json
+     */
     public function deluser(){
         $uid = Request::instance()->post('uid');
         $mod = new user();
@@ -258,6 +269,55 @@ class Admin extends \think\Controller{
         );
     }
 
+    /**
+     * 获取用户信息
+     * @return \think\response\Json
+     */
+    public function getUserInfo(){
+        $uid = intval(Request::instance()->post('uid'));
+        if(!$uid){
+            return json(['code'=>0, 'msg'=>'无效的UID']);
+        }
+        $userModel = new user();
+        if(!$userModel->where('id', $uid)->count()){
+            return json([
+                'code' => 0,
+                'msg' => '用户不存在'
+            ]);
+        }
+        $data = $userModel->field('user,info,isadmin')->where('id', $uid)->find();
+        return json([
+            'code'=> 200,
+            'msg' => '',
+            'data'=>$data
+        ]);
+    }
+
+    /**
+     * 更新用户信息
+     * @return \think\response\Json
+     */
+    public function updateUser(){
+        $data = Request::instance()->post();
+        $data['isadmin'] = empty($data['isadmin'])? 0:1;
+        $data['uid'] = intval($data['uid']);
+        $data['info'] = remove_xss($data['info']);
+        if(!empty($data['repass'])){
+            $data['password'] = $data['repass'];
+        }
+        $userModel = new user();
+        if($userModel->allowField(['password','info','isadmin'])->save($data,['id' => $data['uid']])){
+            return json([
+                'code'=> 200,
+                'msg'=> '更新成功'
+            ]);
+        }else{
+            return json([
+                'code'=> 0,
+                'msg'=> '更新失败'
+            ]);
+        }
+    }
     //后台操作API
     /**
      * 添加题目分类
@@ -322,21 +382,27 @@ class Admin extends \think\Controller{
      * 添加题目与编辑题目
      */
     public function add_answer(){
-        $_POST['score'] = intval(Request::instance()->post('score'));
-        //优先验证编辑模式
-        $cid = Request::instance()->post('cid');
-        $aModel = new answer($_POST);
-        if(Request::instance()->post('edit') == 1){
-            $id  = Request::instance()->post('id');
+        $data = Request::instance()->post();
+        $data['name'] = string_htmlspecialchars($data['name']);
+        $data['name'] = string_htmlspecialchars($data['name']);
+        $data['content'] = remove_xss($data['content']);
+        $data['score'] = intval($data['score']);
+        $data['visible'] = empty($data['visible'])? 0: 1;
+
+        $cid = intval($data['cid']);
+        $aModel = new answer($data);
+
+        if($data['edit'] == 1){
+            $id  = intval($data['id']);
             if(!empty($id)){
-                $id = intval(Request::instance()->post('id'));
                 $ret = $aModel->where('id', $id)->update([
-                    'name'=>Request::instance()->post('name'),
-                    'content'=>Request::instance()->post('content'),
-                    'flag'=>Request::instance()->post('flag'),
-                    'score'=>Request::instance()->post('score'),
+                    'name'=> $data['name'],
+                    'content'=> $data['content'],
+                    'flag'=> $data['flag'],
+                    'score'=> $data['score'],
+                    'visible' => $data['visible']
                 ]);
-                if($ret == 1){
+                if($ret){
                     Cache::rm('answer_'.$id);
                     $this->success('更新成功',url('index/admin/add').'?cid=' . $cid);
                 }
@@ -345,7 +411,7 @@ class Admin extends \think\Controller{
             $this->error('不规范的操作行为');
         }
 
-        if($aModel->allowField(true)->save() == 1){
+        if($aModel->allowField(['name','content', 'flag', 'score', 'visible'])->save() == 1){
             $this->success('添加成功');
         }else{
             $this->error('添加失败');

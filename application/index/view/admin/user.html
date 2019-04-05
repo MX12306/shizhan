@@ -9,12 +9,6 @@
 </div>
 
 <!-- 用户信息编辑 -->
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-    Launch demo modal
-</button>
-
-<!-- Modal -->
 <div class="modal fade" id="userinfo" tabindex="-1" role="dialog" aria-labelledby="info">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -25,7 +19,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="username">用户名</label>
-                    <input type="text" class="form-control" id="username" placeholder="用户名">
+                    <input type="text" class="form-control" id="username" placeholder="用户名" disabled>
                 </div>
                 <div class="form-group">
                     <label for="repass">新密码(留空为不需要改密码)</label>
@@ -35,15 +29,21 @@
                     <label for="uinfo">用户info信息</label>
                     <textarea id="uinfo" class="form-control" rows="3"></textarea>
                 </div>
+                <div class="form-group">
+                    <label>
+                        <input id="isadmin" name="isadmin" type="checkbox"> 是否为管理员
+                    </label>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">保存</button>
+                <button id="save" type="button" class="btn btn-primary" >保存</button>
             </div>
         </div>
     </div>
 </div>
 <script>
+    var id = 0;
     //渲染表格
     $('#userlist').bootstrapTable({
         cache: false,
@@ -69,7 +69,7 @@
             {field: 'isadmin', title: '是否为管理员',sortable : true},
             {field: 'login_time', title: '登录时间'},
             {field: 'login_ip', title: '登录IP'},
-            {field: 'info', title: ''},
+            {field: 'info', title: 'info'},
             {field: 'action', title: '操作', formatter: action}
             ]
     });
@@ -100,12 +100,67 @@
         });
     }
     function edituser(obj) {
-        var id = $(obj).data('id');
-        $('#userinfo').attr('data-uid', id);
+        id = $(obj).data('id');
+        $('#save').prop('disabled', true);
         $('#userinfo').modal('show');
     }
-    $('#userinfo').on('show.bs.modal', function (e) {
-        // do something...
-        console.log($(this).data('uid'));
+
+    $('#userinfo').on('shown.bs.modal', function (e) {
+        $('#username').val('正在获取');
+        $('#uinfo').val('正在获取');
+        $('#isadmin').prop('checked', false);
+        $.ajax({
+            url: "{:url('index/admin/getuserinfo')}",
+            data: {
+                uid:id
+            },
+            datatype:'json',
+            type:'post',
+            success: function (data) {
+                if(data.code === 200){
+                    $('#username').val(data.data.user);
+                    $('#uinfo').val(data.data.info);
+                    if(data.data.isadmin == 1){
+                        $('#isadmin').prop('checked',true);
+                    }else {
+                        $('#isadmin').prop('checked', false);
+                    }
+                    $('#save').prop('disabled', false);
+                    return true;
+                }
+                alert(data.msg);
+            },
+            error:function () {
+                alert('系统错误,请重新尝试');
+            }
+        });
     })
+
+    $('#save').click(function () {
+        if ($('#isadmin').prop("checked")) {
+            var isadmin = 1;
+        }else{
+            var isadmin = 0;
+        }
+        var data = {
+            'uid': id,
+            'isadmin': isadmin,
+            'repass': $('#repass').val(),
+            'info': $('#uinfo').val()
+        };
+        $.ajax({
+            url: "{:url('index/admin/updateuser')}",
+            data: data,
+            type: 'post',
+            datatype:'json',
+            success: function (data_info) {
+                alert(data_info.msg);
+                $('#userinfo').modal('hide');
+                $("#userlist").bootstrapTable('refresh');
+            },
+            error: function () {
+                alert('系统错误,请重新尝试');
+            }
+        });
+    });
 </script>
