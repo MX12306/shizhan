@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `ld_config` (
 --
 
 INSERT INTO `ld_config` (`keys`, `value`, `ms`) VALUES
-('announcement', '欢迎来到灵盾网络安全竞赛答题平台！\r\n请遵守相关规定,请勿对本平台进行恶意攻击!\r\n1.请勿对题目进行破坏。\r\n2.请勿对本平台展开攻击,如果你发现漏洞请联系管理员修复。 （加群问管理或者群主群号：733736818）\r\n3.如果你想把你的题目加入到本平台，请联系管理员哦。（加群问管理或者群主群号：733736818）\r\n本赛场计时器与实际时间有1-3秒的误差（网络原因）。\r\n\r\n本赛题总共有3台靶机：\r\n<pre>\r\n链接：https://pan.baidu.com/s/1cqpZpaxbBCGdIVvMhOUDDw  \r\n提取码：j37z \r\n<h1>需要搭建KVM虚拟机环境才能开机</h1>\r\nKVM 搭建参考这个 https://blog.csdn.net/qq_39452428/article/details/80781403?tdsourcetag=s_pctim_aiomsg\r\n</pre>', '比赛的公告'),
+('announcement', '欢迎来到灵盾网络安全竞赛答题平台！\r\n请遵守相关规定,请勿对本平台进行恶意攻击!\r\n1.请勿对题目进行破坏。\r\n2.请勿对本平台展开攻击,如果你发现漏洞请联系管理员修复。 （加群问管理或者群主群号：733736818）\r\n3.如果你想把你的题目加入到本平台，请联系管理员哦。（加群问管理或者群主群号：733736818）\r\n本赛场计时器与实际时间有1-3秒的误差（网络原因）。\r\n\r\n本赛题总共有3台靶机：\r\n<pre>\r\n链接：https://pan.baidu.com/s/1cqpZpaxbBCGdIVvMhOUDDw  \r\n提取码：j37z \r\n<h1>需要搭建KVM虚拟机环境才能开机</h1>\r\nKVM 搭建参考这个 https://www.bilibili.com/video/av48083899/\r\n</pre>', '比赛的公告'),
 ('title', '网络安全竞赛答题平台', '平台的标题'),
 ('start_time', '0', '开始的时间戳'),
 ('stop_time', '0', '结束的时间戳'),
