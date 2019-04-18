@@ -246,7 +246,7 @@ class Admin extends \think\Controller{
      */
     public function getUserList(){
         $mod = new \app\common\model\user();
-        $data = $mod->select();
+        $data = $mod->field('id,user,isadmin,login_time,login_ip,info')->select();
         return json(
             $data
         );
