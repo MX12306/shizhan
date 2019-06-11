@@ -59,26 +59,26 @@ if (@$_GET['c'] == 'success') {
                 $link->select_db($data['db_dbname']);
             }
 
-            if (function_exists('curl_init')){
-                $curl = curl_init();
-                //统计接口地址
-                //请勿搞破坏谢谢~
-                curl_setopt($curl, CURLOPT_URL, "http://api.ld80.cn/api/index/sendcountinfo/appkey/33483377c35e8682817c66b139e6b39a/type/add/domain/{$_SERVER['HTTP_HOST']}.html");
-                curl_setopt($curl, CURLOPT_HEADER, 0);
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-                $data1 = curl_exec($curl);
-                curl_close($curl);
-                if($data1){
-                    $json_data = json_decode($data1);
-                    if($json_data == null){
-                        echo "<script>alert('统计失败');</script>";
-                    }
-                }else{
-                    die("<script>alert('请联网进行安装');history.go(-1)</script>");
-                }
-            }else{
-                die("<script>alert('缺少curl扩展!');history.go(-1)</script>");
-            }
+            // if (function_exists('curl_init')){
+            //     $curl = curl_init();
+            //     //统计接口地址
+            //     //请勿搞破坏谢谢~
+            //     curl_setopt($curl, CURLOPT_URL, "http://api.ld80.cn/api/index/sendcountinfo/appkey/33483377c35e8682817c66b139e6b39a/type/add/domain/{$_SERVER['HTTP_HOST']}.html");
+            //     curl_setopt($curl, CURLOPT_HEADER, 0);
+            //     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            //     $data1 = curl_exec($curl);
+            //     curl_close($curl);
+            //     if($data1){
+            //         $json_data = json_decode($data1);
+            //         if($json_data == null){
+            //             echo "<script>alert('统计失败');</script>";
+            //         }
+            //     }else{
+            //         die("<script>alert('请联网进行安装');history.go(-1)</script>");
+            //     }
+            // }else{
+            //     die("<script>alert('缺少curl扩展!');history.go(-1)</script>");
+            // }
             // 导入sql数据并创建表
             $shujuku_str = file_get_contents('./install.sql');
             $sql_array = preg_split("/;[\r\n]+/", str_replace('ld_', $data['db_prefix'], $shujuku_str));
