@@ -15,6 +15,7 @@ return [
     'login' => 'index/login/login',
     'register' => 'index/login/reg',
     'outlogin' => 'index/login/outlogin',
+    'api/geetest' => 'index/login/StartCaptchaServlet',
 
     //赛场路由
     'ranking' => 'index/index/ranking',

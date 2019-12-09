@@ -9,6 +9,7 @@ namespace app\index\controller;
 use app\index\model;
 use think\Request;
 use think\Session;
+use gt3\gt3;
 class Login extends \think\Controller{
     /**
      * 初始化配置信息
@@ -45,6 +46,10 @@ class Login extends \think\Controller{
     public function login(){
         if($this->http->isPost()){
             $data = $this->http->post();
+            $res = $this->VerifyLoginServlet();
+            if($res['code'] !== 1){
+                $this->error($res['message']);
+            }
             $data['user'] = string_htmlspecialchars($data['user']);
             //验证token
             if(empty($data['token'])){
@@ -90,6 +95,10 @@ class Login extends \think\Controller{
     public function reg(){
         if($this->http->isPost()){
             $data = $this->http->post();
+            $res = $this->VerifyLoginServlet();
+            if($res['code'] !== 1){
+                $this->error($res['message']);
+            }
             //验证token
             if(empty($data['token'])){
                 $this->error('令牌错误');
@@ -124,5 +133,26 @@ class Login extends \think\Controller{
     public function outlogin(){
         session(null);
         $this->success('已退出登录',url('index/login/login'));//退出后跳转到登陆页面
+    }
+
+    public function StartCaptchaServlet(){
+        $gt = new gt3($this->request);
+        return json($gt->StartCaptchaServlet());
+    }
+
+    /**
+     * Geetest验证逻辑实现
+     * @return mixed
+     */
+    private function VerifyLoginServlet(){
+        $geetest = new gt3($this->request);
+        $gt = $geetest->VerifyLoginServlet();
+        if(!$gt){
+            $data['code'] = 403;
+            $data['message'] = 'geetest: 验证失败,请稍后重试';
+            return $data;
+        }
+        $data['code'] = 1;
+        return $data;
     }
 }

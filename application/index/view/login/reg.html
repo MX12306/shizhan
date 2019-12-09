@@ -16,6 +16,8 @@
                         <input id="password" name="password" type="password" class="form-control" placeholder="Password" aria-describedby="sizing-addon1">
                     </div>
                     <br />
+                    <div id="embed-captcha"></div>
+                    <br />
                     <button type="submit" class="btn btn-success btn-block">注册</button>
                 </form>
             </div>
@@ -31,6 +33,36 @@
     </div>
 </div>
 <script>
+    var enableGeetest = true,
+        captcha = null;
+    var handlerEmbed = function (captchaObj) {
+        captcha = captchaObj;
+        captchaObj.appendTo("#embed-captcha");
+    };
+    $.ajax({
+        url: "{:url('index/login/StartCaptchaServlet')}?t=" + (new Date()).getTime(),
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            if(data === null){
+                enableGeetest = false;
+                return true
+            } else if(data.success === 1){
+                initGeetest({
+                    gt: data.gt,
+                    challenge: data.challenge,
+                    new_captcha: data.new_captcha,
+                    product: "float",
+                    offline: !data.success
+                }, handlerEmbed);
+                return true;
+            }
+            alert("极验加载失败,请刷新重试");
+        },
+        error: function () {
+            alert("系统内部错误");
+        }
+    });
     function verification(){
         var user = $("#user").val();
         var pass = $("#password").val();
@@ -38,7 +70,15 @@
             alert('用户/密码不能为空');
             return false;
         }
+        if(enableGeetest){
+            var result = captcha.getValidate();
+            if (!result) {
+                alert("请先完成验证");
+                return false;
+            }
+        }
         return true;
     }
 </script>
+<script src="http://static.geetest.com/static/tools/gt.js"></script>
 {include file="index:bottom"}
