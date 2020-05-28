@@ -1,5 +1,5 @@
 /composer.lock
-/public/install/install.lock
+source/public/install/install.lock
 .idea
 .DS_Store
 .git

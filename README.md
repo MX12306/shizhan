@@ -11,7 +11,23 @@
 ![输入图片说明](https://gitee.com/uploads/images/2019/0405/144453_b7c796a3_1270405.png "屏幕截图.png")
 后端界面
 ![输入图片说明](https://gitee.com/uploads/images/2019/0405/144627_df6e2b5b_1270405.png "屏幕截图.png")
-#### 安装教程
+
+#### Docker
+ 1. 构建镜像
+
+    说明: 平台的管理员账户及密码可在start.sh:7中更改
+
+    shell执行`docker build -t shizhan:latest .`来构建docker镜像, 首先你需要保证你已经安装并启动docker
+
+ 2. 选择现有镜像
+
+    shell执行`docker pull xxxxxxxxx`来下载docker镜像, 首先你需要保证你已经安装并启动docker
+
+ 3. 启动容器
+    
+    shell执行`docker run -p80:80 -v /var/lib/mysql:/var/lib/mysql shizhan:latest`
+
+#### 安装教程 (旧版,已将源代码挪到source目录下)
 1.环境要求:PHP5.6以上
           mysql 5.5
 
@@ -42,11 +58,8 @@
     1.平台配置
     2.题目管理
     3.用户管理
-3.剩下的功能慢慢研究咯~~~
-
  **
 
 ### 这也是平台最后一个功能 以后估计也不会怎么更新了** 
 #### 如果你有兴趣继续完善该平台那就完善吧！记得发我一份哦~~
 #### 作者QQ - 1834833515
-#### 欢迎加入灵盾网的群 - 688282009
