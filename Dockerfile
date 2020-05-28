@@ -6,7 +6,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update&& apt-get install -y tzdata php-fpm php-dev php-mysql php-gd php-curl php-pear nginx mysql-server
 
 RUN mkdir -p /var/www/html
-ADD source/* /var/www/html/shizhan
+ADD source /var/www/html/shizhan
 ADD default /etc/nginx/sites-enabled/default
 ADD www.conf /etc/php/7.2/fpm/pool.d/www.conf
 ADD start.sh start.sh
